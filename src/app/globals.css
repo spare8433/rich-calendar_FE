@@ -2,20 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --pink: 350 100% 80%;
+    --pink-background: 300 100% 98%;
+    --blue: 210 50% 60%;
+    --blue-background: 170 100% 96%;
+    --green: 120 50% 50%;
+    --green-background: 103 99% 95%;
+    --yellow: 50 100% 50%;
+    --yellow-background: 60 99% 95%;
+    --purple: 270 50% 70%;
+    --purple-background: 240 100% 98.6%;
+    --orange: 30 100% 60%;
+    --orange-background: 36 100% 97.1%;
+    --mint: 150 60% 70%;
+    --mint-background: 155 89% 96%; 
+    --lavender: 240 80% 80%;
+    --lavender-background: 240 100% 99%;
+    --beige: 60 70% 75%;
+    --beige-background: 60 100% 97.1%;
+    --coral: 360 100% 70%;
+    --coral-background: 360 100% 99%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+    --schedule-background: var(--muted);
+    --schedule: var(--muted-foreground);
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --pink: 350 100% 80%;
+    --pink-background: 350 100% 93%;
+    --blue: 210 50% 60%;
+    --blue-background: 200 45% 87%;
+    --green: 120 50% 50%;
+    --green-background: 140 47% 81%;
+    --yellow: 50 100% 50%;
+    --yellow-background: 60 100% 88%;
+    --purple: 270 50% 70%;
+    --purple-background: 270 26% 81%;
+    --orange: 30 100% 60%;
+    --orange-background: 30 100% 85%;
+    --mint: 150 60% 70%;
+    --mint-background: 150 60% 82%;
+    --lavender: 240 80% 80%;
+    --lavender-background: 240 15% 96%;
+    --beige: 60 70% 75%;
+    --beige-background: 60 40% 90%;
+    --coral: 360 100% 70%;
+    --coral-background: 360 100% 87%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+    --schedule-background: var(--muted);
+    --schedule: var(--muted-foreground);
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
