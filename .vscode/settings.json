@@ -6,5 +6,10 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
-  "cSpell.words": ["turbopack"]
+  "cSpell.words": [
+    "callees",
+    "turbopack",
+    "vercel",
+    "XVCJ"
+  ]
 }
