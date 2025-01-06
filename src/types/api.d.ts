@@ -1,7 +1,7 @@
 interface GetSchedulesReq {
-  start_date: string; // ISO8601
-  end_date: string; // ISO8601
-  tag_ids?: number[];
+  startDate: string; // ISO8601
+  endDate: string; // ISO8601
+  tagIds?: number[];
 }
 
 interface GetSchedulesRes {
@@ -19,27 +19,27 @@ interface GetScheduleRes {
   importance: ScheduleImportanceType;
   color: ColorType;
   tags: Tag[];
-  start_date: string; // ISO8601
-  end_date: string; // ISO8601
-  is_repeat: boolean;
-  repeat_frequency: RepeatFrequencyType;
-  repeat_interval: number;
-  repeat_end_option?: "count" | "end_date" | "none";
-  repeat_endDate?: string | null; // ISO8601
-  repeat_end_count?: number | null;
+  startDate: string; // ISO8601
+  endDate: string; // ISO8601
+  isRepeat: boolean;
+  repeatFrequency: RepeatFrequencyType;
+  repeatInterval: number;
+  repeatEndOption?: "count" | "endDate" | "none";
+  repeatEndDate?: string | null; // ISO8601
+  repeatEndCount?: number | null;
 }
 
 interface GetScheduleTagsRes {
-  schedule_tags: Tag[];
+  tags: Tag[];
 }
 
 interface GetSummarySchedulesReq {
-  selected_date: string; // ISO8601 (YYYY-MM-DD)
-  tag_ids?: number[];
+  selectedDate: string; // ISO8601 (YYYY-MM-DD)
+  tagIds?: number[];
 }
 
 interface GetSummarySchedulesRes {
-  side_schedules: SummarySchedule[];
+  summarySchedules: SummarySchedule[];
 }
 
 interface SchedulePathParam {
@@ -55,40 +55,40 @@ interface ModifyScheduleReq {
   description?: string;
   importance?: ScheduleImportanceType;
   color?: ColorType;
-  start_date?: string; // ISO8601
-  end_date?: string; // ISO8601
-  is_repeat?: boolean;
-  repeat_end_option?: RepeatEndOptionType;
-  repeat_frequency?: RepeatFrequencyType;
-  repeat_interval?: number;
-  repeat_end_date?: string; // ISO8601
-  repeat_end_count?: number;
+  startDate?: string; // ISO8601
+  endDate?: string; // ISO8601
+  isRepeat?: boolean;
+  repeatEndOption?: RepeatEndOptionType;
+  repeatFrequency?: RepeatFrequencyType;
+  repeatInterval?: number;
+  repeatEndDate?: string; // ISO8601
+  repeatEndCount?: number;
 }
 
 interface ModifyRepeatScheduleReq extends ModifyScheduleReq {
-  modify_type: ModifyOptionType;
-  before_start_date: string; // ISO8601
-  before_end_date: string; // ISO8601
+  modifyType: ModifyOptionType;
+  beforeStartDate: string; // ISO8601
+  beforeEndDate: string; // ISO8601
 }
 
 interface DeleteScheduleReq {
-  delete_type: DeleteOptionType;
+  deleteType: DeleteOptionType;
 }
 
 interface CreateScheduleReq {
-  tags: number[];
+  tagIds: number[];
   title: string;
   description: string;
   importance: ScheduleImportanceType;
   color: ColorType;
-  start_date: string; // ISO8601
-  end_date: string; // ISO8601
-  is_repeat: boolean;
-  repeat_end_option?: RepeatEndOptionType;
-  repeat_frequency?: RepeatFrequencyType | null;
-  repeat_interval?: number | null;
-  repeat_end_date?: string | null; // ISO8601
-  repeat_end_count?: number | null;
+  startDate: string; // ISO8601
+  endDate: string; // ISO8601
+  isRepeat: boolean;
+  repeatEndOption?: RepeatEndOptionType;
+  repeatFrequency?: RepeatFrequencyType | null;
+  repeatInterval?: number | null;
+  repeatEndDate?: string | null; // ISO8601
+  repeatEndCount?: number | null;
 }
 
 interface LoginReq {
@@ -130,7 +130,7 @@ interface FindIdReq {
 interface FindIdSuccessRes {
   success: true;
   id: string;
-  created_at: string; // ISO8601 (YYYY-MM-DD)
+  createdAt: string; // ISO8601 (YYYY-MM-DD)
 }
 
 interface FindIdFailureRes {

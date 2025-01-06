@@ -31,7 +31,7 @@ export const AuthHandlers = [
 
   // id 찾기
   http.post<never, FindIdReq, FindIdRes>(`${API_URL}/find-id`, () => {
-    return HttpResponse.json({ success: true, id: "userid12332", created_at: "2024-07-23" });
+    return HttpResponse.json({ success: true, id: "userid12332", createdAt: "2024-07-23" });
   }),
 
   // 이메일 인증코드 발송
