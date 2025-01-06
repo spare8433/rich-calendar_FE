@@ -1,7 +1,7 @@
 {
   "extends": [
     "next/core-web-vitals",
-    "eslint-config-prettier",
+    "plugin:prettier/recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:tailwindcss/recommended"
@@ -53,7 +53,7 @@
     "unused-imports/no-unused-imports-ts": ["error"],
 
     // React
-    "react/react-in-jsx-scope": 0,
+    "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "react/jsx-first-prop-new-line": "error",
     "react/self-closing-comp": ["error", {
