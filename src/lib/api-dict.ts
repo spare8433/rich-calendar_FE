@@ -13,20 +13,19 @@ interface ApiEndpointInfo {
 export interface ApiEndpoint {
   getSchedules: HttpReqRes<GetSchedulesReq, GetSchedulesRes>;
   getScheduleTags: HttpReqRes<never, GetScheduleTagsRes>;
-  getSummarySchedules: HttpReqRes<GetSummarySchedulesReq, GetSummarySchedulesRes>;
   getSchedule: HttpReqRes<never, GetScheduleRes>;
+  getSummarySchedules: HttpReqRes<GetSummarySchedulesReq, GetSummarySchedulesRes>;
   modifySchedule: HttpReqRes<ModifyScheduleReq, never>;
-  modifyRepeatSchedule: HttpReqRes<ModifyRepeatScheduleReq, never>;
-  deleteSchedule: HttpReqRes<DeleteScheduleReq, never>;
+  deleteSchedule: HttpReqRes<never, never>;
   createSchedule: HttpReqRes<CreateScheduleReq, never>;
   login: HttpReqRes<LoginReq, never>;
   signup: HttpReqRes<SignupReq, never>;
-  checkId: HttpReqRes<CheckIdReq, CheckIdRes>;
+  checkUsername: HttpReqRes<CheckUsernameReq, CheckUsernameRes>;
   checkEmail: HttpReqRes<CheckEmailReq, CheckEmailRes>;
-  findId: HttpReqRes<FindIdReq, FindIdRes>;
+  findUsername: HttpReqRes<FindUsernameReq, FindUsernameRes>;
   sendEmailCode: HttpReqRes<SendEmailCodeReq, never>;
   verifyEmailCode: HttpReqRes<VerifyEmailCodeReq, VerifyEmailCodeRes>;
-  sendPwCode: HttpReqRes<SendPwCodeReq, SendPwCodeRes>;
+  sendPwCode: HttpReqRes<SendPwCodeReq, never>;
   verifyPwCode: HttpReqRes<VerifyPwCodeReq, VerifyPwCodeRes>;
   resetPw: HttpReqRes<ResetPwReq, never>;
   getMyInfo: HttpReqRes<never, LoginRes>;
@@ -36,42 +35,37 @@ export interface ApiEndpoint {
 // API Endpoint 정보
 export const apiEndpoint: Record<keyof ApiEndpoint, ApiEndpointInfo> = {
   getSchedules: {
-    url: "/api/schedule/list",
+    url: "/api/schedules",
     method: "GET",
     withCredentials: true,
   },
   getScheduleTags: {
-    url: "/api/schedule/total-tags",
-    method: "GET",
-    withCredentials: true,
-  },
-  getSummarySchedules: {
-    url: "/api/schedule/summary-list",
+    url: "/api/schedules/tags",
     method: "GET",
     withCredentials: true,
   },
   modifySchedule: {
-    url: "/api/schedule",
-    method: "PATCH",
-    withCredentials: true,
-  },
-  modifyRepeatSchedule: {
-    url: "/api/schedule/repeat",
+    url: "/api/schedules",
     method: "PATCH",
     withCredentials: true,
   },
   getSchedule: {
-    url: "/api/schedule",
+    url: "/api/schedules",
+    method: "GET",
+    withCredentials: true,
+  },
+  getSummarySchedules: {
+    url: "/api/schedules/summary",
     method: "GET",
     withCredentials: true,
   },
   deleteSchedule: {
-    url: "/api/schedule",
+    url: "/api/schedules",
     method: "DELETE",
     withCredentials: true,
   },
   createSchedule: {
-    url: "/api/schedule",
+    url: "/api/schedules",
     method: "POST",
     withCredentials: true,
   },
@@ -84,20 +78,20 @@ export const apiEndpoint: Record<keyof ApiEndpoint, ApiEndpointInfo> = {
     url: "/api/auth/signup",
     method: "POST",
   },
-  checkId: {
-    url: "/api/auth/check-id",
+  checkUsername: {
+    url: "/api/auth/username/check-username",
     method: "POST",
   },
   checkEmail: {
-    url: "/api/auth/check-email",
+    url: "/api/auth/email/check-email",
     method: "POST",
   },
-  findId: {
-    url: "/api/auth/find-id",
+  findUsername: {
+    url: "/api/auth/username/find-username",
     method: "POST",
   },
   sendEmailCode: {
-    url: "/api/auth/email/code",
+    url: "/api/auth/email/send-code",
     method: "POST",
   },
   verifyEmailCode: {
@@ -105,7 +99,7 @@ export const apiEndpoint: Record<keyof ApiEndpoint, ApiEndpointInfo> = {
     method: "POST",
   },
   sendPwCode: {
-    url: "/api/auth/password/code",
+    url: "/api/auth/password/send-code",
     method: "POST",
   },
   verifyPwCode: {
@@ -113,8 +107,8 @@ export const apiEndpoint: Record<keyof ApiEndpoint, ApiEndpointInfo> = {
     method: "POST",
   },
   resetPw: {
-    url: "/api/auth/password/",
-    method: "POST",
+    url: "/api/auth/password",
+    method: "PATCH",
   },
   getMyInfo: {
     url: "/api/users/me",
