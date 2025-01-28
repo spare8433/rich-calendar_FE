@@ -6,13 +6,13 @@ export const UserHandlers = [
   // 로그인
   http.get<never, never, LoginRes>(`${API_URL}/me`, () => {
     return HttpResponse.json({
-      id: "user3356",
+      username: "user3356",
       email: "yiccfee@naver.com",
     });
   }),
 
   // 회원탈퇴
-  http.delete<never, never, string>(`${API_URL}/me`, () => {
+  http.delete(`${API_URL}/me`, () => {
     return HttpResponse.text("ok");
   }),
 ];

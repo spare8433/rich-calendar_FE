@@ -4,38 +4,28 @@ const API_URL = "api/auth";
 
 export const AuthHandlers = [
   // 로그인
-  http.post<never, LoginReq, string>(`${API_URL}/login`, () => {
+  http.post<never, LoginReq>(`${API_URL}/login`, () => {
     // 가짜 JWT 토큰 생성 (예제용)
     const mockJwtToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5kb2UiLCJpYXQiOjE2Mjk3OTc3NzYsImV4cCI6MTYyOTgwMTM3Nn0.rR1fLPC-bkCvpIJyO6y5xETrX6AcP5E7bnEVYmP5tDU";
 
-      return new HttpResponse("ok", {
-        headers: { "Set-Cookie": `authToken=${mockJwtToken}; Path=/; HttpOnly` },
-      }).json()
+    return new HttpResponse("ok", {
+      headers: { "Set-Cookie": `authToken=${mockJwtToken}; Path=/; HttpOnly` },
+    }).json();
   }),
 
   // 회원가입
-  http.post<never, SignupReq, string>(`${API_URL}/signup`, () => {
+  http.post<never, SignupReq>(`${API_URL}/signup`, () => {
     return HttpResponse.text("ok");
   }),
 
   // 중복 email 확인
-  http.post<never, CheckEmailReq, CheckEmailRes>(`${API_URL}/check-email`, () => {
+  http.post<never, CheckEmailReq, CheckEmailRes>(`${API_URL}/email/check-email`, () => {
     return HttpResponse.json({ available: true });
-  }),
-
-  // 중복 id 확인
-  http.post<never, CheckIdReq, CheckIdRes>(`${API_URL}/check-id`, () => {
-    return HttpResponse.json({ available: true });
-  }),
-
-  // id 찾기
-  http.post<never, FindIdReq, FindIdRes>(`${API_URL}/find-id`, () => {
-    return HttpResponse.json({ success: true, id: "userid12332", createdAt: "2024-07-23" });
   }),
 
   // 이메일 인증코드 발송
-  http.post<never, SendEmailCodeReq, string>(`${API_URL}/email/code`, () => {
+  http.post<never, SendEmailCodeReq>(`${API_URL}/email/send-code`, () => {
     return HttpResponse.text("ok");
   }),
 
@@ -44,9 +34,19 @@ export const AuthHandlers = [
     return HttpResponse.json({ success: true });
   }),
 
+  // 중복 username 확인
+  http.post<never, CheckUsernameReq, CheckUsernameRes>(`${API_URL}/username/check-username`, () => {
+    return HttpResponse.json({ available: true });
+  }),
+
+  // username 찾기
+  http.post<never, FindUsernameReq, FindUsernameRes>(`${API_URL}/username/find-username`, () => {
+    return HttpResponse.json({ success: true, username: "userid12332", createdAt: "2024-07-23" });
+  }),
+
   // 비밀번호 인증코드 발송
-  http.post<never, SendPwCodeReq, SendPwCodeRes>(`${API_URL}/password/code`, () => {
-    return HttpResponse.json({ success: true });
+  http.post<never, SendPwCodeReq>(`${API_URL}/password/send-code`, () => {
+    return HttpResponse.text("ok");
   }),
 
   // 비밀번호 코드 인증
@@ -55,7 +55,7 @@ export const AuthHandlers = [
   }),
 
   // 비밀번호 재설정
-  http.post<never, ResetPwReq, string>(`${API_URL}/password`, () => {
+  http.patch<never, ResetPwReq>(`${API_URL}/password`, () => {
     return HttpResponse.text("ok");
   }),
 ];

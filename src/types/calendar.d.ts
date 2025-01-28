@@ -4,34 +4,41 @@ type ScheduleImportanceType = "veryLow" | "low" | "medium" | "high" | "veryHigh"
 
 type RepeatFrequencyType = "daily" | "weekly" | "monthly" | "yearly";
 
-type RepeatEndOptionType = "count" | "endDate" | null;
-
-type ModifyOptionType = "only" | "afterAll" | "all";
-
-type DeleteOptionType = ModifyOptionType & {};
-
 interface Tag {
   id: number;
-  name: string;
+  title: string;
 }
 
-interface Schedule {
+interface BasicCalendarSchedule {
   id: number;
   title: string;
   color: ColorType;
-  dates: {
-    startDate: string; // ISO8601
-    endDate: string; // ISO8601
-  }[];
+  startDate: string; // ISO8601
+  endDate: string; // ISO8601
 }
 
+interface RepeatOptions {
+  isRepeat: true;
+  repeatFrequency: RepeatFrequencyType;
+  repeatInterval: number;
+  repeatEndCount: number;
+}
+
+interface NoRepeatOptions {
+  isRepeat: false;
+}
+
+type RepeatCalendarSchedule = BasicCalendarSchedule & RepeatOptions;
+
+type NoRepeatCalendarSchedule = BasicCalendarSchedule & NoRepeatOptions;
+
+type CalendarSchedule = RepeatCalendarSchedule | NoRepeatCalendarSchedule;
+
 interface SummarySchedule {
+  id: number;
   startDate: string; // ISO8601 (YYYY-MM-DD)
-  schedules: {
-    id: number;
-    endDate: string; // ISO8601 (YYYY-MM-DD)
-    title: string;
-    color: ColorType;
-    tagNames: string[];
-  }[];
+  endDate: string; // ISO8601 (YYYY-MM-DD)
+  title: string;
+  color: ColorType;
+  tags: string[];
 }

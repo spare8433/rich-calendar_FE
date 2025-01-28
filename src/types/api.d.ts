@@ -5,41 +5,32 @@ interface GetSchedulesReq {
 }
 
 interface GetSchedulesRes {
-  schedules: Schedule[];
+  schedules: CalendarSchedule[];
 }
 
 interface GetScheduleParam {
   sid: string;
 }
 
-interface GetScheduleRes {
+interface BasicScheduleDetail {
   id: number;
   title: string;
-  description: string;
+  description?: string;
   importance: ScheduleImportanceType;
   color: ColorType;
   tags: Tag[];
   startDate: string; // ISO8601
   endDate: string; // ISO8601
-  isRepeat: boolean;
-  repeatFrequency: RepeatFrequencyType;
-  repeatInterval: number;
-  repeatEndOption?: "count" | "endDate" | "none";
-  repeatEndDate?: string | null; // ISO8601
-  repeatEndCount?: number | null;
 }
+
+type RepeatScheduleDetail = BasicScheduleDetail & RepeatOptions;
+
+type NoRepeatScheduleDetail = BasicScheduleDetail & NoRepeatOptions;
+
+type GetScheduleRes = RepeatScheduleDetail | NoRepeatScheduleDetail;
 
 interface GetScheduleTagsRes {
   tags: Tag[];
-}
-
-interface GetSummarySchedulesReq {
-  selectedDate: string; // ISO8601 (YYYY-MM-DD)
-  tagIds?: number[];
-}
-
-interface GetSummarySchedulesRes {
-  summarySchedules: SummarySchedule[];
 }
 
 interface SchedulePathParam {
@@ -58,24 +49,12 @@ interface ModifyScheduleReq {
   startDate?: string; // ISO8601
   endDate?: string; // ISO8601
   isRepeat?: boolean;
-  repeatEndOption?: RepeatEndOptionType;
   repeatFrequency?: RepeatFrequencyType;
   repeatInterval?: number;
-  repeatEndDate?: string; // ISO8601
   repeatEndCount?: number;
 }
 
-interface ModifyRepeatScheduleReq extends ModifyScheduleReq {
-  modifyType: ModifyOptionType;
-  beforeStartDate: string; // ISO8601
-  beforeEndDate: string; // ISO8601
-}
-
-interface DeleteScheduleReq {
-  deleteType: DeleteOptionType;
-}
-
-interface CreateScheduleReq {
+interface BasicCreateScheduleReq {
   tagIds: number[];
   title: string;
   description: string;
@@ -83,35 +62,44 @@ interface CreateScheduleReq {
   color: ColorType;
   startDate: string; // ISO8601
   endDate: string; // ISO8601
-  isRepeat: boolean;
-  repeatEndOption?: RepeatEndOptionType;
-  repeatFrequency?: RepeatFrequencyType | null;
-  repeatInterval?: number | null;
-  repeatEndDate?: string | null; // ISO8601
-  repeatEndCount?: number | null;
 }
 
+interface GetSummarySchedulesReq {
+  startDate: string; // ISO8601
+  endDate: string; // ISO8601
+}
+
+interface GetSummarySchedulesRes {
+  schedules: SummarySchedule[];
+}
+
+type CreateRepeatScheduleReq = BasicCreateScheduleReq & RepeatOptions;
+
+type CreateNoRepeatScheduleReq = BasicCreateScheduleReq & NoRepeatOptions;
+
+type CreateScheduleReq = CreateRepeatScheduleReq | CreateNoRepeatScheduleReq;
+
 interface LoginReq {
-  id: string;
+  username: string;
   password: string;
 }
 
 interface LoginRes {
-  id: string;
+  username: string;
   email: string;
 }
 
 interface SignupReq {
-  id: string;
+  username: string;
   email: string;
   password: string;
 }
 
-interface CheckIdReq {
-  id: string;
+interface CheckUsernameReq {
+  username: string;
 }
 
-interface CheckIdRes {
+interface CheckUsernameRes {
   available: boolean;
 }
 
@@ -123,21 +111,21 @@ interface CheckEmailRes {
   available: boolean;
 }
 
-interface FindIdReq {
+interface FindUsernameReq {
   email: string;
 }
 
-interface FindIdSuccessRes {
+interface FindUsernameSuccessRes {
   success: true;
-  id: string;
+  username: string;
   createdAt: string; // ISO8601 (YYYY-MM-DD)
 }
 
-interface FindIdFailureRes {
+interface FindUsernameFailureRes {
   success: false;
 }
 
-type FindIdRes = FindIdSuccessRes | FindIdFailureRes;
+type FindUsernameRes = FindUsernameSuccessRes | FindUsernameFailureRes;
 
 interface SendEmailCodeReq {
   email: string;
@@ -154,10 +142,6 @@ interface VerifyEmailCodeRes {
 
 interface SendPwCodeReq {
   email: string;
-}
-
-interface SendPwCodeRes {
-  success: boolean;
 }
 
 interface VerifyPwCodeReq {
