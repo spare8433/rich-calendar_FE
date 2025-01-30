@@ -13,18 +13,11 @@ import {
 } from "@/components/auth/schemas";
 import { LoadingButton } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import {
-  CustomFormMessage,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
+import { CustomError } from "@/lib/customError";
 
 interface VerifyEmailModalProps {
   changeIsOpen: (open: boolean) => void;
@@ -50,23 +43,28 @@ export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEm
   const { email } = sendEmailForm.watch();
   const { code } = verifyEmailForm.watch();
 
-  const { mutate: checkEmailMutate } = useMutation<CheckEmailRes, DefaultError, { req: CheckEmailReq }>({
-    mutationFn: ({ req }) => apiRequest("checkEmail", req),
-    onSuccess: ({ available }) => {
-      if (!available) sendEmailForm.setError("email", { type: "duplicate", message: "사용 불가능한 이메일입니다." });
-    },
-    onError: () =>
-      sendEmailForm.setError("email", { type: "server", message: "이메일 확인이 정상적으로 처리되지 않았습니다." }),
-  });
-
   const sendCodeMutation = useMutation<null, DefaultError, { req: SendEmailCodeReq }>({
     mutationFn: ({ req }) => apiRequest("sendEmailCode", req),
     onSuccess: () => setMode("verify"),
-    onError: () =>
-      toast({
-        title: "인증코드 발송이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
-        variant: "destructive",
-      }),
+    onError: (error) => {
+      if (error instanceof CustomError) {
+        switch (error.statusCode) {
+          case 400:
+          case 409:
+            return sendEmailForm.setError("email", { message: "인증 불가능한 이메일입니다." });
+          case 429:
+            return toast({
+              title: "인증 코드 요청 횟수를 초과했습니다 10분 후 다시 시도해주세요.",
+              variant: "warning",
+            });
+          default:
+            return toast({
+              title: "인증코드 발송이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
+              variant: "destructive",
+            });
+        }
+      }
+    },
   });
 
   const verifyCodeMutation = useMutation<VerifyEmailCodeRes, DefaultError, { req: VerifyEmailCodeReq }>({
@@ -79,20 +77,29 @@ export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEm
         toast({ title: "인증코드가 일치하지 않습니다", variant: "warning" });
       }
     },
-    onError: () =>
-      toast({
-        title: "인증코드 확인이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
-        variant: "destructive",
-      }),
+    onError: (error) => {
+      if (error instanceof CustomError) {
+        switch (error.statusCode) {
+          case 400:
+            return verifyEmailForm.setError("code", { message: "잘못된 인증코드 형식입니다." });
+          case 409:
+            toast({
+              title: "입력된 이메일이 유효하지 않아 다시 이메일 인증이 필요합니다.",
+              variant: "warning",
+            });
+            return setMode("input");
+          default:
+            return toast({
+              title: "인증코드 확인이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
+              variant: "destructive",
+            });
+        }
+      }
+    },
   });
 
   const { mutate: sendCodeMutate, isPending: isSendCodePending } = sendCodeMutation;
   const { mutate: verifyCodeMutate, isPending: isVerifyCodePending } = verifyCodeMutation;
-
-  const checkEmailValidation = async () => {
-    if (!(await sendEmailForm.trigger("email"))) return;
-    checkEmailMutate({ req: { email: email } });
-  };
 
   return (
     <Dialog open={true} onOpenChange={changeIsOpen}>
@@ -111,9 +118,9 @@ export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEm
                   <FormItem>
                     <FormLabel>이메일</FormLabel>
                     <FormControl>
-                      <Input placeholder="이메일" {...field} onBlur={checkEmailValidation} />
+                      <Input placeholder="이메일" {...field} />
                     </FormControl>
-                    <CustomFormMessage retry={checkEmailValidation} />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
