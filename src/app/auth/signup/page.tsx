@@ -40,7 +40,7 @@ export default function Signup() {
   const form = useForm<FormValues>({
     resolver: zodResolver(SIGNUP_SCHEMA),
     mode: "onBlur",
-    defaultValues: { id: "", email: "", password: "", confirmPassword: "", agreeToTerms: false },
+    defaultValues: { username: "", email: "", password: "", confirmPassword: "", agreeToTerms: false },
   });
 
   const { mutate, isPending } = useMutation<null, DefaultError, { req: SignupReq }>({
@@ -56,7 +56,7 @@ export default function Signup() {
         <h1 className="text-xl font-medium">회원가입</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit((data) => mutate({ req: data }))} className="flex w-full flex-col gap-y-4">
-            <IdField />
+            <UsernameField />
             <EmailField openVerifyEmail={() => setIsEmailModalOpen(true)} />
             <PasswordField />
             <ConfirmPasswordField />
@@ -64,7 +64,7 @@ export default function Signup() {
             <LoadingButton
               isLoading={isPending}
               className="w-full"
-              disabled={!form.formState.isValid || !!form.getFieldState("id").error}
+              disabled={!form.formState.isValid || !!form.getFieldState("username").error}
             >
               회원가입
             </LoadingButton>
@@ -88,16 +88,16 @@ export default function Signup() {
 
 const SIGNUP_SCHEMA = z
   .object({
-    id: z
+    username: z
       .string()
-      .min(3, "아이디는 최소 3자 이상이어야 합니다.")
-      .max(30, "아이디는 최대 30자 이하이어야 합니다.")
+      .min(5, "아이디는 최소 5자 이상이어야 합니다.")
+      .max(20, "아이디는 최대 20자 이하이어야 합니다.")
       .regex(/^[a-zA-Z0-9._-]+$/, "아이디는 영문자, 숫자, 점, 밑줄, 하이픈만 사용할 수 있습니다."),
     email: z.string().email("유효한 email 주소를 입력해주세요."),
     password: z
       .string()
       .min(9, "비밀번호는 최소 9자 이상이어야 합니다.")
-      .max(64, "비밀번호는 최대 64자 이하이어야 합니다.")
+      .max(32, "비밀번호는 최대 32자 이하이어야 합니다.")
       .regex(
         /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!\"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~])[A-Za-z\d!\"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]{8,}$/,
         "비밀번호는 대문자, 소문자, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.",
@@ -112,25 +112,28 @@ const SIGNUP_SCHEMA = z
 
 type FormValues = z.infer<typeof SIGNUP_SCHEMA>;
 
-const IdField = () => {
+const UsernameField = () => {
   const { control, setError, getValues, trigger } = useFormContext<FormValues>();
 
-  const { mutate: checkDuplicateIdMutate } = useMutation<CheckIdRes, DefaultError, { req: CheckIdReq }>({
-    mutationFn: ({ req }) => apiRequest("checkId", req),
+  const { mutate: checkDuplicateIdMutate } = useMutation<CheckUsernameRes, DefaultError, { req: CheckUsernameReq }>({
+    mutationFn: ({ req }) => apiRequest("checkUsername", req),
     onSuccess: ({ available }) => {
       if (!available)
-        setError("id", { type: "duplicate", message: "사용할 수 없는 아이디입니다 다른 아이디를 입력해 주세요." });
+        setError("username", {
+          type: "duplicate",
+          message: "사용할 수 없는 아이디입니다 다른 아이디를 입력해 주세요.",
+        });
     },
-    onError: () => setError("id", { type: "server", message: "아이디 확인이 정상적으로 처리되지 않았습니다." }),
+    onError: () => setError("username", { type: "server", message: "아이디 확인이 정상적으로 처리되지 않았습니다." }),
   });
 
   const checkIdValidation = async () => {
-    if (!(await trigger("id"))) return;
-    checkDuplicateIdMutate({ req: { id: getValues("id") } });
+    if (!(await trigger("username"))) return;
+    checkDuplicateIdMutate({ req: { username: getValues("username") } });
   };
   return (
     <FormField
-      name="id"
+      name="username"
       control={control}
       render={({ field }) => (
         <FormItem>
