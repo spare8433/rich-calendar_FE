@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
-import { CustomError } from "@/lib/customError";
+import { handleMutationError } from "@/lib/utils";
 
 const LOGIN_FORM_SCHEMA = z.object({
   username: z
@@ -48,23 +48,16 @@ export default function Login() {
   const { mutate, isPending } = useMutation<null, DefaultError, LoginVariables>({
     mutationFn: ({ req }) => apiRequest("login", req),
     onSuccess: () => router.push("/"),
-    onError: (error) => {
-      if (error instanceof CustomError) {
-        switch (error.statusCode) {
-          case 400:
-          case 404:
-            return toast({
-              title: "로그인에 실패했습니다 입력하신정보를 다시확인해주세요.",
-              variant: "warning",
-            });
-          default:
-            return toast({
-              title: "로그인이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
-              variant: "destructive",
-            });
-        }
-      }
-    },
+    onError: (error) =>
+      handleMutationError(error, {
+        400: () => toast({ title: "로그인에 실패했습니다 입력하신 정보를 다시 확인해주세요.", variant: "warning" }),
+        404: () => toast({ title: "로그인에 실패했습니다 입력하신 정보를 다시 확인해주세요.", variant: "warning" }),
+        default: () =>
+          toast({
+            title: "로그인이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
+            variant: "destructive",
+          }),
+      }),
   });
 
   return (
@@ -105,7 +98,7 @@ export default function Login() {
       </Form>
 
       <div className="text-muted-foreground divide-muted-foreground flex divide-x">
-        <Link href="/auth/find-id" className="px-3 text-sm">
+        <Link href="/auth/find-username" className="px-3 text-sm">
           아이디 찾기
         </Link>
         <Link href="/auth/find-pw" className="px-3 text-sm">

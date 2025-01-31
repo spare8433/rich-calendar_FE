@@ -17,7 +17,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
-import { CustomError } from "@/lib/customError";
+import { handleMutationError } from "@/lib/utils";
 
 interface VerifyEmailModalProps {
   changeIsOpen: (open: boolean) => void;
@@ -26,7 +26,7 @@ interface VerifyEmailModalProps {
 
 export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEmailModalProps) {
   const { toast } = useToast();
-  const [mode, setMode] = useState<"input" | "verify">("input");
+  const [verifyEmailStage, setVerifyEmailStage] = useState<"sendCode" | "verifyCode">("sendCode");
 
   const sendEmailForm = useForm<SendCodeFormValues>({
     resolver: zodResolver(SEND_CODE_SCHEMA),
@@ -43,28 +43,21 @@ export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEm
   const { email } = sendEmailForm.watch();
   const { code } = verifyEmailForm.watch();
 
-  const sendCodeMutation = useMutation<null, DefaultError, { req: SendEmailCodeReq }>({
+  const sendCodeMutation = useMutation<never, DefaultError, { req: SendEmailCodeReq }>({
     mutationFn: ({ req }) => apiRequest("sendEmailCode", req),
-    onSuccess: () => setMode("verify"),
-    onError: (error) => {
-      if (error instanceof CustomError) {
-        switch (error.statusCode) {
-          case 400:
-          case 409:
-            return sendEmailForm.setError("email", { message: "인증 불가능한 이메일입니다." });
-          case 429:
-            return toast({
-              title: "인증 코드 요청 횟수를 초과했습니다 10분 후 다시 시도해주세요.",
-              variant: "warning",
-            });
-          default:
-            return toast({
-              title: "인증코드 발송이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
-              variant: "destructive",
-            });
-        }
-      }
-    },
+    onSuccess: () => setVerifyEmailStage("verifyCode"),
+    onError: (error) =>
+      handleMutationError(error, {
+        400: () => sendEmailForm.setError("email", { message: "인증 불가능한 이메일입니다." }),
+        409: () => sendEmailForm.setError("email", { message: "인증 불가능한 이메일입니다." }),
+        429: () =>
+          toast({ title: "인증 코드 요청 횟수를 초과했습니다 10분 후 다시 시도해 주세요.", variant: "warning" }),
+        default: () =>
+          toast({
+            title: "인증코드 발송이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
+            variant: "destructive",
+          }),
+      }),
   });
 
   const verifyCodeMutation = useMutation<VerifyEmailCodeRes, DefaultError, { req: VerifyEmailCodeReq }>({
@@ -75,27 +68,22 @@ export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEm
         changeIsOpen(false);
       } else {
         toast({ title: "인증코드가 일치하지 않습니다", variant: "warning" });
+        verifyEmailForm.setError("code", { message: "올바른 인증코드를 입력해주세요." });
       }
     },
-    onError: (error) => {
-      if (error instanceof CustomError) {
-        switch (error.statusCode) {
-          case 400:
-            return verifyEmailForm.setError("code", { message: "잘못된 인증코드 형식입니다." });
-          case 409:
-            toast({
-              title: "입력된 이메일이 유효하지 않아 다시 이메일 인증이 필요합니다.",
-              variant: "warning",
-            });
-            return setMode("input");
-          default:
-            return toast({
-              title: "인증코드 확인이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
-              variant: "destructive",
-            });
-        }
-      }
-    },
+    onError: (error) =>
+      handleMutationError(error, {
+        400: () => verifyEmailForm.setError("code", { message: "잘못된 인증코드 형식입니다." }),
+        409: () => {
+          toast({ title: "입력된 이메일이 유효하지 않아 이메일 재인증이 필요합니다.", variant: "warning" });
+          setVerifyEmailStage("sendCode");
+        },
+        default: () =>
+          toast({
+            title: "인증코드 확인이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
+            variant: "destructive",
+          }),
+      }),
   });
 
   const { mutate: sendCodeMutate, isPending: isSendCodePending } = sendCodeMutation;
@@ -104,7 +92,7 @@ export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEm
   return (
     <Dialog open={true} onOpenChange={changeIsOpen}>
       <DialogContent onInteractOutside={(e) => e.preventDefault()}>
-        {mode === "input" && (
+        {verifyEmailStage === "sendCode" && (
           <Form {...sendEmailForm}>
             <form onSubmit={sendEmailForm.handleSubmit(() => sendCodeMutate({ req: { email } }))} className="space-y-6">
               <DialogHeader>
@@ -134,7 +122,7 @@ export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEm
             </form>
           </Form>
         )}
-        {mode === "verify" && (
+        {verifyEmailStage === "verifyCode" && (
           <Form {...verifyEmailForm}>
             <form
               onSubmit={verifyEmailForm.handleSubmit(() => verifyCodeMutate({ req: { email, code } }))}

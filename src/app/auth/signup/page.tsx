@@ -31,6 +31,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { SERVICE, TERMS } from "@/constants";
 import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
+import { handleMutationError } from "@/lib/utils";
 
 export default function Signup() {
   const router = useRouter();
@@ -46,8 +47,20 @@ export default function Signup() {
   const { mutate, isPending } = useMutation<null, DefaultError, { req: SignupReq }>({
     mutationFn: ({ req }) => apiRequest("signup", req),
     onSuccess: () => router.push("/"),
-    onError: () =>
-      toast({ title: "회원가입이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.", variant: "destructive" }),
+    onError: (error) =>
+      handleMutationError(error, {
+        400: () => toast({ title: "회원가입에 실패했습니다 입력하신 정보를 다시 확인해주세요.", variant: "warning" }),
+        409: () =>
+          toast({
+            title: "사용불가능한 아이디 및 이메일이 존재합니다 입력하신정보를 다시 확인해주세요.",
+            variant: "warning",
+          }),
+        default: () =>
+          toast({
+            title: "회원가입이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
+            variant: "destructive",
+          }),
+      }),
   });
 
   return (
