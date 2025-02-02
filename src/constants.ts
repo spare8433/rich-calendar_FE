@@ -1,3 +1,9 @@
+export const SCHEDULE_VIEW_TYPE = {
+  day: "timeGridDay",
+  week: "timeGridWeek",
+  month: "dayGridMonth",
+} as const;
+
 export const TERMS = `
 개인정보 수집 및 이용 동의
 

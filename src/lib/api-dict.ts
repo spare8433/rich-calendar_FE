@@ -11,11 +11,12 @@ interface ApiEndpointInfo {
 
 // API Req, Res 타입 정의
 export interface ApiEndpoint {
-  getSchedules: HttpReqRes<GetSchedulesReq, GetSchedulesRes>;
+  getCalendarSchedules: HttpReqRes<GetSchedulesReq, GetSchedulesRes>;
   getScheduleTags: HttpReqRes<never, GetScheduleTagsRes>;
   getSchedule: HttpReqRes<never, GetScheduleRes>;
   getSummarySchedules: HttpReqRes<GetSummarySchedulesReq, GetSummarySchedulesRes>;
-  modifySchedule: HttpReqRes<ModifyScheduleReq, never>;
+  modifyCalendarSchedule: HttpReqRes<ModifyCalendarScheduleReq, never>;
+  updateSchedule: HttpReqRes<UpdateScheduleReq, never>;
   deleteSchedule: HttpReqRes<never, never>;
   createSchedule: HttpReqRes<CreateScheduleReq, never>;
   login: HttpReqRes<LoginReq, never>;
@@ -34,8 +35,8 @@ export interface ApiEndpoint {
 
 // API Endpoint 정보
 export const apiEndpoint: Record<keyof ApiEndpoint, ApiEndpointInfo> = {
-  getSchedules: {
-    url: "/api/schedules",
+  getCalendarSchedules: {
+    url: "/api/schedules/calendars",
     method: "GET",
     withCredentials: true,
   },
@@ -44,7 +45,12 @@ export const apiEndpoint: Record<keyof ApiEndpoint, ApiEndpointInfo> = {
     method: "GET",
     withCredentials: true,
   },
-  modifySchedule: {
+  modifyCalendarSchedule: {
+    url: "/api/schedules/calendar",
+    method: "PATCH",
+    withCredentials: true,
+  },
+  updateSchedule: {
     url: "/api/schedules",
     method: "PATCH",
     withCredentials: true,

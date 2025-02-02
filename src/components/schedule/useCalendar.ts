@@ -1,0 +1,130 @@
+"use client";
+
+import {
+  CalendarOptions,
+  DayCellMountArg,
+  EventChangeArg,
+  EventClickArg,
+  EventDropArg,
+  EventInput,
+  EventMountArg,
+} from "@fullcalendar/core/index.js";
+import { EventImpl } from "@fullcalendar/core/internal";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin, { DateClickArg, EventResizeDoneArg } from "@fullcalendar/interaction";
+import FullCalendar from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import { useRouter } from "next/navigation";
+import { RefObject, useState } from "react";
+
+import { SCHEDULE_VIEW_TYPE } from "@/constants";
+import { useCalendarContext } from "@/contexts/calendar";
+
+export interface ScheduleExtendedProps {
+  isRepeat: boolean;
+  scheduleId: number;
+  color: ColorType;
+}
+
+export interface ScheduleInput extends EventInput {
+  extendedProps: ScheduleExtendedProps;
+}
+
+export interface ScheduleEvent extends EventImpl {
+  extendedProps: ScheduleExtendedProps;
+}
+
+export default function useCalendar(calendarRef: RefObject<FullCalendar | null>) {
+  const router = useRouter();
+  const { currentDate, viewType } = useCalendarContext();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [scheduleChange, setScheduleChange] = useState<ScheduleChangeObject | null>(null);
+
+  const onEventChange = (arg: EventChangeArg) => setConfirmOpen(true);
+
+  const onEventResize = (arg: EventResizeDoneArg) => {
+    const { oldEvent, event } = arg;
+    const { startStr: beforeStartAt, endStr: beforeEndAt, extendedProps } = oldEvent;
+    const { startStr: startAt, endStr: endAt } = event as ScheduleEvent;
+    const { scheduleId, isRepeat } = extendedProps;
+
+    setScheduleChange({
+      id: scheduleId,
+      isRepeat,
+      beforeStartAt,
+      beforeEndAt,
+      startAt,
+      endAt,
+    });
+  };
+
+  const onEventDrop = (arg: EventDropArg) => {
+    // arg.revert()
+    const { oldEvent, event } = arg;
+    const { startStr: beforeStartAt, endStr: beforeEndAt, extendedProps } = oldEvent;
+    const { startStr: startAt, endStr: endAt } = event as ScheduleEvent;
+    const { scheduleId, isRepeat } = extendedProps;
+
+    setScheduleChange({
+      id: scheduleId,
+      isRepeat,
+      beforeStartAt,
+      beforeEndAt,
+      startAt,
+      endAt,
+    });
+  };
+
+  const onEventDidMount = (info: EventMountArg) => {
+    const color = info.event.extendedProps.color;
+
+    // CSS 변수를 이벤트 DOM 요소에 인라인으로 설정
+    info.el.style.setProperty("--schedule-background", `var(--${color}-background)`);
+    info.el.style.setProperty("--schedule", `var(--${color})`);
+  };
+
+  const onEventClick = (arg: EventClickArg) => {
+    const { extendedProps } = arg.event as ScheduleEvent;
+    router.push(`/schedule/${extendedProps.scheduleId}`);
+  };
+
+  const onDayCellDidMount = (info: DayCellMountArg) => {
+    info.el.style.setProperty("cursor", "pointer");
+  };
+
+  const onDateClick = (arg: DateClickArg) => router.push("/schedule/add");
+
+  // Fullcalendar props 객체
+  const calendarOption: CalendarOptions & { ref: RefObject<FullCalendar | null> } = {
+    // data
+    initialDate: currentDate,
+    ref: calendarRef,
+    // setting & style
+    plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+    initialView: SCHEDULE_VIEW_TYPE[viewType],
+    headerToolbar: false,
+    views: {
+      timeGridDay: {
+        dayHeaderFormat: { month: "numeric", day: "numeric", weekday: "long", omitCommas: true },
+      },
+    },
+    expandRows: true,
+    height: "100%",
+    eventResizableFromStart: true,
+    // 일정 상호작용 관련
+    eventChange: onEventChange,
+    eventResize: onEventResize,
+    eventClick: onEventClick,
+    eventDrop: onEventDrop,
+    eventDidMount: onEventDidMount,
+    dayCellDidMount: onDayCellDidMount,
+    dateClick: onDateClick,
+  };
+
+  return {
+    confirmOpen,
+    scheduleChange,
+    calendarOption,
+    onConfirmOpenChange: (open: boolean) => setConfirmOpen(open),
+  };
+}

@@ -37,11 +37,19 @@ interface SchedulePathParam {
   sid: string;
 }
 
-type ModifyScheduleParam = SchedulePathParam & {};
+type UpdateScheduleParam = SchedulePathParam & {};
 type DeleteScheduleParam = SchedulePathParam & {};
 
-interface ModifyScheduleReq {
-  tags?: number[];
+interface ModifyCalendarScheduleReq {
+  beforeStartAt: string;
+  beforeEndAt: string;
+  startAt: string;
+  endAt: string;
+  isRepeat: boolean;
+}
+
+interface UpdateScheduleReq {
+  tagIds?: number[];
   title?: string;
   description?: string;
   importance?: ScheduleImportanceType;

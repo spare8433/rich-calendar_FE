@@ -18,7 +18,7 @@ const handleApiError = (error: unknown): never => {
     // 서버가 응답을 반환한 경우
     switch (error.response.status) {
       case 400:
-        throw new CustomError("요청에 문제가 있습니다.", 400);
+        throw new CustomError("요청에 문제가 있습니다.");
       case 401:
         throw new CustomError("인증이 필요합니다.", 401);
       case 403:
