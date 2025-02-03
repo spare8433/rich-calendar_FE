@@ -98,7 +98,8 @@ export default function CalendarHeader({ isSideOpen, onClickSideButton }: Props)
 }
 
 const FilterContents = () => {
-  const { checkedTagIds, startDate, endDate, setCheckedTagIds, getTagChecked, setTagChecked } = useCalendarContext();
+  const { checkedTagIds, startDate, endDate, updateCheckedTagIds, updateTagChecked, getTagChecked } =
+    useCalendarContext();
 
   // 필터링용 태그 목록 요청 로직
   const { data: scheduleTagsData } = useSuspenseQuery({
@@ -119,9 +120,9 @@ const FilterContents = () => {
     if (initialIds) {
       const entireIdsSet = new Set(initialIds);
       entireIdsSet.delete(tagId);
-      setCheckedTagIds(Array.from(entireIdsSet));
+      updateCheckedTagIds(Array.from(entireIdsSet));
     } else {
-      setTagChecked(checked, tagId);
+      updateTagChecked(checked, tagId);
     }
   }
 

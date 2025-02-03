@@ -5,7 +5,7 @@ interface HttpReqRes<T_Req = unknown, T_Res = unknown> {
 
 interface ApiEndpointInfo {
   url: string;
-  method: "GET" | "POST" | "PATCH" | "DELETE";
+  method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
   withCredentials?: boolean;
 }
 
@@ -35,28 +35,41 @@ export interface ApiEndpoint {
 
 // API Endpoint 정보
 export const apiEndpoint: Record<keyof ApiEndpoint, ApiEndpointInfo> = {
+  // schedules
+  createSchedule: {
+    url: "/api/schedules",
+    method: "POST",
+    withCredentials: true,
+  },
+  getSchedule: {
+    url: "/api/schedules",
+    method: "GET",
+    withCredentials: true,
+  },
+  updateSchedule: {
+    url: "/api/schedules",
+    method: "PUT",
+    withCredentials: true,
+  },
+  deleteSchedule: {
+    url: "/api/schedules",
+    method: "DELETE",
+    withCredentials: true,
+  },
+
+  // calendars
   getCalendarSchedules: {
     url: "/api/schedules/calendars",
     method: "GET",
     withCredentials: true,
   },
+  modifyCalendarSchedule: {
+    url: "/api/schedules/calendars",
+    method: "PATCH",
+    withCredentials: true,
+  },
   getScheduleTags: {
     url: "/api/schedules/tags",
-    method: "GET",
-    withCredentials: true,
-  },
-  modifyCalendarSchedule: {
-    url: "/api/schedules/calendar",
-    method: "PATCH",
-    withCredentials: true,
-  },
-  updateSchedule: {
-    url: "/api/schedules",
-    method: "PATCH",
-    withCredentials: true,
-  },
-  getSchedule: {
-    url: "/api/schedules",
     method: "GET",
     withCredentials: true,
   },
@@ -65,16 +78,8 @@ export const apiEndpoint: Record<keyof ApiEndpoint, ApiEndpointInfo> = {
     method: "GET",
     withCredentials: true,
   },
-  deleteSchedule: {
-    url: "/api/schedules",
-    method: "DELETE",
-    withCredentials: true,
-  },
-  createSchedule: {
-    url: "/api/schedules",
-    method: "POST",
-    withCredentials: true,
-  },
+
+  // auth
   login: {
     url: "/api/auth/login",
     method: "POST",
@@ -88,12 +93,12 @@ export const apiEndpoint: Record<keyof ApiEndpoint, ApiEndpointInfo> = {
     url: "/api/auth/username/check-username",
     method: "POST",
   },
-  checkEmail: {
-    url: "/api/auth/email/check-email",
-    method: "POST",
-  },
   findUsername: {
     url: "/api/auth/username/find-username",
+    method: "POST",
+  },
+  checkEmail: {
+    url: "/api/auth/email/check-email",
     method: "POST",
   },
   sendEmailCode: {
@@ -104,6 +109,10 @@ export const apiEndpoint: Record<keyof ApiEndpoint, ApiEndpointInfo> = {
     url: "/api/auth/email/verify-code",
     method: "POST",
   },
+  resetPw: {
+    url: "/api/auth/password",
+    method: "PATCH",
+  },
   sendPwCode: {
     url: "/api/auth/password/send-code",
     method: "POST",
@@ -112,10 +121,8 @@ export const apiEndpoint: Record<keyof ApiEndpoint, ApiEndpointInfo> = {
     url: "/api/auth/password/verify-code",
     method: "POST",
   },
-  resetPw: {
-    url: "/api/auth/password",
-    method: "PATCH",
-  },
+
+  // users/me
   getMyInfo: {
     url: "/api/users/me",
     method: "GET",

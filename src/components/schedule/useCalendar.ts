@@ -36,7 +36,7 @@ export interface ScheduleEvent extends EventImpl {
 
 export default function useCalendar(calendarRef: RefObject<FullCalendar | null>) {
   const router = useRouter();
-  const { currentDate, viewType } = useCalendarContext();
+  const { currentDate, viewType, updateDateObj } = useCalendarContext();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [scheduleChange, setScheduleChange] = useState<ScheduleChangeObject | null>(null);
 
@@ -111,6 +111,9 @@ export default function useCalendar(calendarRef: RefObject<FullCalendar | null>)
     expandRows: true,
     height: "100%",
     eventResizableFromStart: true,
+    datesSet: (arg) => {
+      updateDateObj(arg.startStr, arg.endStr);
+    },
     // 일정 상호작용 관련
     eventChange: onEventChange,
     eventResize: onEventResize,

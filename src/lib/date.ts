@@ -1,8 +1,15 @@
 import dayjs, { ConfigType } from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
+
+export function convertUstToKST(date: ConfigType) {
+  return dayjs(date).local();
+}
 
 /**  기본 날짜 형식으로 변환하여 반환 (YYYY-MM-DDTHH:mm:SSS) */
 export function getDefaultFormatDate(date: ConfigType) {
-  return dayjs(date).format("YYYY-MM-DDTHH:mm:SSS");
+  return dayjs(date).format("YYYY-MM-DDTHH:mm:sssZ");
 }
 
 /** 입력받은 특정 날짜의 해당 월의 달력 기준 시작과 끝 날짜 반환 함수 */
@@ -31,17 +38,17 @@ export function getWeekDateRange(date: Date | string) {
   const currentDate = dayjs(date);
 
   // 해당 주의 첫째 날
-  const calendarWeekStartDate = currentDate.startOf("week").format("YYYY-MM-DD");
+  const calendarWeekStartDate = currentDate.startOf("week").toISOString();
 
   // 해당 주의 마지막 날
-  const calendarWeekEndDate = currentDate.endOf("week").format("YYYY-MM-DD");
+  const calendarWeekEndDate = currentDate.endOf("week").toISOString();
 
   return { startDate: calendarWeekStartDate, endDate: calendarWeekEndDate };
 }
 
 /** 입력 받은 특정 날짜가 자정이라면 YYYY-MM-DD 형식으로 반환 (ex: 2024-06-10T00:00 -> 2024-06-10) */
 export function changeDateIfMidnight(startDate: Date | string) {
-  const dateTime = dayjs(startDate);
+  const dateTime = dayjs(startDate).local();
 
   if (dateTime.hour() === 0 && dateTime.minute() === 0) {
     // "YYYY-MM-DD" 형식으로 변경
