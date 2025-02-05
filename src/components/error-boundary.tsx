@@ -13,13 +13,16 @@ const handleError = (error: CustomError, info: ErrorInfo) => {
   if (error.statusCode === 401) location.replace("/auth/login");
 };
 
-// 핸들링 되지 못해서 throw 받은 에러
-function FallbackRender({ error, resetErrorBoundary }: { error: CustomError | null; resetErrorBoundary: () => void }) {
-  console.error(error);
+interface FallbackComponentProps {
+  error: CustomError | null;
+  resetErrorBoundary: () => void;
+}
 
+// 핸들링 되지 못해서 throw 받은 에러
+function FallbackRender({ error, resetErrorBoundary }: FallbackComponentProps) {
   return (
-    <div role="alert" className="flex flex-col items-center justify-center">
-      <p className="mb-2 text-2xl font-bold">{error?.message ?? "요청사항을 처리하는 중 오류가 발생했습니다."}</p>
+    <div role="alert" className="flex size-full flex-col items-center justify-center">
+      <p className="mb-2 text-lg font-bold">{error?.message ?? "정보를 불러오지 못했습니다."}</p>
       <p className="mb-4 font-medium">잠시 후 다시 시도해 주세요.</p>
       <Button type="button" onClick={resetErrorBoundary}>
         다시 시도
@@ -30,7 +33,7 @@ function FallbackRender({ error, resetErrorBoundary }: { error: CustomError | nu
 
 type ErrorBoundaryProps = {
   children: React.ReactNode;
-  FallbackComponent?: (props: { error: CustomError | null; resetErrorBoundary: () => void }) => React.ReactNode;
+  FallbackComponent?: (props: FallbackComponentProps) => React.ReactNode;
 };
 
 export default function ErrorBoundary({ children, FallbackComponent }: ErrorBoundaryProps): JSX.Element {

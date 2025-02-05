@@ -1,9 +1,8 @@
 "use client";
 
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, PanelRightDashed } from "lucide-react";
-import { Suspense } from "react";
 
 import BasicLoader from "@/components/basic-loader";
 import ErrorBoundary from "@/components/error-boundary";
@@ -38,7 +37,7 @@ export default function CalendarHeader({ isSideOpen, onClickSideButton }: Props)
   const { calendarTitle, viewType, moveCalendar, changeView } = useCalendarContext();
 
   return (
-    <div className="flex justify-between border-b px-4 py-3">
+    <div className="flex h-16 items-center justify-between border-b px-4">
       <div className="flex items-center gap-x-1">
         {/* 캘린더 view 이동 버튼 */}
         <Button variant="outline" size="icon-sm" aria-label="이전으로" onClick={() => moveCalendar("prev")}>
@@ -55,9 +54,7 @@ export default function CalendarHeader({ isSideOpen, onClickSideButton }: Props)
           </SelectTrigger>
           <SelectContent className="p-2 text-sm">
             <ErrorBoundary>
-              <Suspense fallback={<BasicLoader />}>
-                <FilterContents />
-              </Suspense>
+              <FilterContents />
             </ErrorBoundary>
           </SelectContent>
         </Select>
@@ -102,10 +99,13 @@ const FilterContents = () => {
     useCalendarContext();
 
   // 필터링용 태그 목록 요청 로직
-  const { data: scheduleTagsData } = useSuspenseQuery({
-    queryKey: ["schedule_tag", "list", checkedTagIds, startDate, endDate],
+  const { data: scheduleTagsData, isSuccess } = useQuery({
+    throwOnError: true,
+    queryKey: ["scheduleTags", checkedTagIds, startDate, endDate],
     queryFn: () => apiRequest("getScheduleTags"),
   });
+
+  if (!isSuccess) return <BasicLoader />;
 
   const { tags } = scheduleTagsData;
   const scheduleTagIds = tags.map(({ id }) => id);

@@ -29,7 +29,7 @@ export interface ApiEndpoint {
   sendPwCode: HttpReqRes<SendPwCodeReq, never>;
   verifyPwCode: HttpReqRes<VerifyPwCodeReq, VerifyPwCodeRes>;
   resetPw: HttpReqRes<ResetPwReq, never>;
-  getMyInfo: HttpReqRes<never, LoginRes>;
+  getMyInfo: HttpReqRes<never, GetMyInfoRes>;
   withdrawMember: HttpReqRes<never, never>;
 }
 

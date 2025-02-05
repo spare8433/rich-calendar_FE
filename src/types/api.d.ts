@@ -165,3 +165,8 @@ interface ResetPwReq {
   email: string;
   password: string;
 }
+
+interface GetMyInfoRes {
+  username: string;
+  email: string;
+}

@@ -5,15 +5,15 @@ import {
   DayCellMountArg,
   EventChangeArg,
   EventClickArg,
-  EventDropArg,
   EventInput,
   EventMountArg,
 } from "@fullcalendar/core/index.js";
 import { EventImpl } from "@fullcalendar/core/internal";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin, { DateClickArg, EventResizeDoneArg } from "@fullcalendar/interaction";
+import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { RefObject, useState } from "react";
 
@@ -34,44 +34,31 @@ export interface ScheduleEvent extends EventImpl {
   extendedProps: ScheduleExtendedProps;
 }
 
+interface ModifyCalendarScheduleVariables {
+  req: ModifyCalendarScheduleReq;
+  pathParam: string;
+}
+
 export default function useCalendar(calendarRef: RefObject<FullCalendar | null>) {
   const router = useRouter();
   const { currentDate, viewType, updateDateObj } = useCalendarContext();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [scheduleChange, setScheduleChange] = useState<ScheduleChangeObject | null>(null);
 
-  const onEventChange = (arg: EventChangeArg) => setConfirmOpen(true);
-
-  const onEventResize = (arg: EventResizeDoneArg) => {
+  const onEventChange = (arg: EventChangeArg) => {
     const { oldEvent, event } = arg;
     const { startStr: beforeStartAt, endStr: beforeEndAt, extendedProps } = oldEvent;
     const { startStr: startAt, endStr: endAt } = event as ScheduleEvent;
     const { scheduleId, isRepeat } = extendedProps;
 
+    setConfirmOpen(true);
     setScheduleChange({
       id: scheduleId,
       isRepeat,
-      beforeStartAt,
-      beforeEndAt,
-      startAt,
-      endAt,
-    });
-  };
-
-  const onEventDrop = (arg: EventDropArg) => {
-    // arg.revert()
-    const { oldEvent, event } = arg;
-    const { startStr: beforeStartAt, endStr: beforeEndAt, extendedProps } = oldEvent;
-    const { startStr: startAt, endStr: endAt } = event as ScheduleEvent;
-    const { scheduleId, isRepeat } = extendedProps;
-
-    setScheduleChange({
-      id: scheduleId,
-      isRepeat,
-      beforeStartAt,
-      beforeEndAt,
-      startAt,
-      endAt,
+      beforeStartAt: dayjs(beforeStartAt).toISOString(),
+      beforeEndAt: dayjs(beforeEndAt).toISOString(),
+      startAt: dayjs(startAt).toISOString(),
+      endAt: dayjs(endAt).toISOString(),
     });
   };
 
@@ -116,9 +103,7 @@ export default function useCalendar(calendarRef: RefObject<FullCalendar | null>)
     },
     // 일정 상호작용 관련
     eventChange: onEventChange,
-    eventResize: onEventResize,
     eventClick: onEventClick,
-    eventDrop: onEventDrop,
     eventDidMount: onEventDidMount,
     dayCellDidMount: onDayCellDidMount,
     dateClick: onDateClick,
