@@ -4,6 +4,21 @@ export const SCHEDULE_VIEW_TYPE = {
   month: "dayGridMonth",
 } as const;
 
+export const COLORS = [
+  "pink",
+  "blue",
+  "green",
+  "yellow",
+  "purple",
+  "orange",
+  "mint",
+  "lavender",
+  "beige",
+  "coral",
+] as const;
+
+export const INVALID_TYPE_ERROR = { message: "부적절한 값입니다." };
+
 export const TERMS = `
 개인정보 수집 및 이용 동의
 

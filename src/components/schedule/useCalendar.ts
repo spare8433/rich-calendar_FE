@@ -72,14 +72,14 @@ export default function useCalendar(calendarRef: RefObject<FullCalendar | null>)
 
   const onEventClick = (arg: EventClickArg) => {
     const { extendedProps } = arg.event as ScheduleEvent;
-    router.push(`/schedule/${extendedProps.scheduleId}`);
+    router.push(`/schedules/${extendedProps.scheduleId}`);
   };
 
   const onDayCellDidMount = (info: DayCellMountArg) => {
     info.el.style.setProperty("cursor", "pointer");
   };
 
-  const onDateClick = (arg: DateClickArg) => router.push("/schedule/add");
+  const onDateClick = (arg: DateClickArg) => router.push("/schedules/add");
 
   // Fullcalendar props 객체
   const calendarOption: CalendarOptions & { ref: RefObject<FullCalendar | null> } = {

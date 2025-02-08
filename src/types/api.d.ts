@@ -23,9 +23,19 @@ interface BasicScheduleDetail {
   endDate: string; // ISO8601
 }
 
-type RepeatScheduleDetail = BasicScheduleDetail & RepeatOptions;
+type RepeatScheduleDetail = BasicScheduleDetail & {
+  isRepeat: true;
+  repeatFrequency: RepeatFrequencyType;
+  repeatInterval: number;
+  repeatEndCount: number;
+};
 
-type NoRepeatScheduleDetail = BasicScheduleDetail & NoRepeatOptions;
+type NoRepeatScheduleDetail = BasicScheduleDetail & {
+  isRepeat: false;
+  repeatFrequency: null;
+  repeatInterval: null;
+  repeatEndCount: null;
+};
 
 type GetScheduleRes = RepeatScheduleDetail | NoRepeatScheduleDetail;
 
@@ -49,17 +59,17 @@ interface ModifyCalendarScheduleReq {
 }
 
 interface UpdateScheduleReq {
-  tagIds?: number[];
-  title?: string;
-  description?: string;
-  importance?: ScheduleImportanceType;
-  color?: ColorType;
-  startDate?: string; // ISO8601
-  endDate?: string; // ISO8601
-  isRepeat?: boolean;
-  repeatFrequency?: RepeatFrequencyType;
-  repeatInterval?: number;
-  repeatEndCount?: number;
+  tagIds: number[];
+  title: string;
+  description: string;
+  importance: ScheduleImportanceType;
+  color: ColorType;
+  startDate: string; // ISO8601
+  endDate: string; // ISO8601
+  isRepeat: boolean;
+  repeatFrequency: RepeatFrequencyType | null;
+  repeatInterval: number | null;
+  repeatEndCount: number | null;
 }
 
 interface BasicCreateScheduleReq {

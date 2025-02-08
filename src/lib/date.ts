@@ -66,3 +66,41 @@ export function areDatesEqual(date1: ConfigType, date2: ConfigType) {
 
   return d1.isSame(d2);
 }
+
+/** 기존 날짜시간 에서 새로운 날짜의 년, 월, 일로 변경  */
+export function modifyOnlyDate(prevDate: ConfigType, changedDate: ConfigType) {
+  // 기존 시간 dayjs 객체로 변환
+  const prevDayjs = dayjs(prevDate);
+
+  // 새로운 Date 객체를 dayjs 객체로 변환하여 년월일 가져옴
+  const changeDayjs = dayjs(changedDate);
+
+  // 기존 시간의 시, 분, 초 유지하고 새로운 날짜의 년, 월, 일로 설정
+  const finalDate = prevDayjs
+    .year(changeDayjs.year()) // 새로운 날짜의 "년" 으로 변경
+    .month(changeDayjs.month()) // 새로운 날짜의 "월" 로 변경
+    .date(changeDayjs.date()); // 새로운 날짜의 "일" 로 변경
+
+  return finalDate;
+}
+
+/**
+ * 기존 날짜시간 에서 새로운 시간 시, 분, 초로 변경
+ * @param prevDate 여러 형식의 기존 날짜 데이터
+ * @param changeTime "HH:mm" 형식의 시간 데이터
+ * @returns dayjs 객체
+ */
+export function modifyOnlyTime(prevDate: ConfigType, changedTime: string) {
+  // 기존 시간 dayjs 객체로 변환
+  const prevDayjs = dayjs(prevDate);
+
+  // HH:mm 형식의 시간 데이터 분리
+  const [hour, minute] = changedTime.split(":");
+
+  // 기존 시간의 시, 분, 초 유지하고 새로운 날짜의 년, 월, 일로 설정
+  const finalDate = prevDayjs
+    .hour(Number(hour)) // 새로운 시간의 "시" 로 변경
+    .minute(Number(minute)); // 새로운 시간의 "분" 으로 변경
+
+  return finalDate;
+}

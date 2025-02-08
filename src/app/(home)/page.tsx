@@ -157,16 +157,6 @@ const CalendarSideMenu = () => {
   });
 
   if (!isSuccess) return <BasicLoader />;
-  // if (isError)
-  //   return (
-  //     <div className="flex size-full flex-col items-center justify-center space-y-4">
-  //       <FileX2 size={64} className="text-muted-foreground" />
-  //       <p className="font-bold">정보를 불러오지 못했습니다.</p>
-  //       <Button type="button" onClick={() => refetch()}>
-  //         다시시도
-  //       </Button>
-  //     </div>
-  //   );
 
   const groupedScheduleMap = new Map<string, SummarySchedule[]>();
 
