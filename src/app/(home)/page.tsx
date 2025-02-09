@@ -6,16 +6,16 @@ import { DefaultError, useMutation } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { FileX2 } from "lucide-react";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
-import BasicLoader from "@/components/basic-loader";
-import ErrorBoundary from "@/components/error-boundary";
-import CalendarHeader from "@/components/schedule/calendar-header";
-import useCalendar, { ScheduleExtendedProps, ScheduleInput } from "@/components/schedule/useCalendar";
-import ScheduleConfirmModal from "@/components/schedule-confirm-modal";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { CalendarProvider, useCalendarContext } from "@/contexts/calendar";
+import CalendarHeader from "@/app/(home)/calendar-header";
+import useCalendar, { ScheduleExtendedProps, ScheduleInput } from "@/app/(home)/useCalendar";
+import BasicLoader from "@/app/components/basic-loader";
+import ErrorBoundary from "@/app/components/error-boundary";
+import ScheduleConfirmModal from "@/app/components/schedule-confirm-modal";
+import { Button } from "@/app/components/ui/button";
+import { ScrollArea } from "@/app/components/ui/scroll-area";
+import { useCalendarContext } from "@/contexts/calendar";
 import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
 import { changeDateIfMidnight } from "@/lib/date";
@@ -27,45 +27,42 @@ interface ModifyCalendarScheduleVariables {
 }
 
 export default function ScheduleCalendar() {
-  const calendarRef = useRef<FullCalendar>(null);
   const [isSideOpen, setIsSideOpen] = useState(false);
 
   return (
-    <CalendarProvider calendarRef={calendarRef}>
-      <div className="relative z-0 flex size-full flex-1">
-        {/* 캘린더 전체 */}
-        <div className="absolute flex size-full flex-col ">
-          {/* 캘린더 조작을 위한 header 부분 */}
-          <CalendarHeader isSideOpen={isSideOpen} onClickSideButton={() => setIsSideOpen((prev) => !prev)} />
+    <div className="relative z-0 flex size-full flex-1">
+      {/* 캘린더 전체 */}
+      <div className="absolute flex size-full flex-col ">
+        {/* 캘린더 조작을 위한 header 부분 */}
+        <CalendarHeader isSideOpen={isSideOpen} onClickSideButton={() => setIsSideOpen((prev) => !prev)} />
 
-          <div className="flex h-full flex-1">
-            {/* calendar */}
-            <ErrorBoundary
-              FallbackComponent={({ resetErrorBoundary }) => (
-                <div className="bg-muted flex size-full flex-col items-center justify-center space-y-4 text-xl">
-                  <FileX2 size={128} className="text-muted-foreground" />
-                  <p className="font-bold">정보를 불러오지 못했습니다.</p>
-                  <Button type="button" size="lg" className="text-lg" onClick={() => resetErrorBoundary()}>
-                    다시시도
-                  </Button>
-                </div>
-              )}
-            >
-              <CalendarContent />
-            </ErrorBoundary>
-
-            {isSideOpen && (
-              // 사이드 메뉴
-              <aside className="border-box flex h-full w-72 flex-col border-l p-4 lg:inline-block">
-                <ErrorBoundary>
-                  <CalendarSideMenu />
-                </ErrorBoundary>
-              </aside>
+        <div className="flex h-full flex-1">
+          {/* calendar */}
+          <ErrorBoundary
+            FallbackComponent={({ resetErrorBoundary }) => (
+              <div className="bg-muted flex size-full flex-col items-center justify-center space-y-4 text-xl">
+                <FileX2 size={128} className="text-muted-foreground" />
+                <p className="font-bold">정보를 불러오지 못했습니다.</p>
+                <Button type="button" size="lg" className="text-lg" onClick={() => resetErrorBoundary()}>
+                  다시시도
+                </Button>
+              </div>
             )}
-          </div>
+          >
+            <CalendarContent />
+          </ErrorBoundary>
+
+          {isSideOpen && (
+            // 사이드 메뉴
+            <aside className="border-box flex h-full w-72 flex-col border-l p-4 lg:inline-block">
+              <ErrorBoundary>
+                <CalendarSideMenu />
+              </ErrorBoundary>
+            </aside>
+          )}
         </div>
       </div>
-    </CalendarProvider>
+    </div>
   );
 }
 
@@ -106,18 +103,15 @@ const CalendarContent = () => {
     return {
       id: `${id}-${startAt}`,
       title: sch.title,
-      classNames: `font-medium`,
+      classNames: `border-2 pl-1 text-foreground font-bold`,
       // 시간 단위로 설정된 일정은 캘린더에서 editable 이 일부 제한되므로 자정 즉 일단위로 설정된 일정은 시간 단위를 제거하여 사용
       start: changeDateIfMidnight(startAt),
       end: changeDateIfMidnight(endAt),
-      backgroundColor: `hsl(var(--schedule))`,
-      borderColor: `hsl(var(--schedule))`,
+      backgroundColor: "hsl(var(--schedule-background))",
+      borderColor: "hsl(var(--schedule))",
+      textColor: "hsl(var(--text-color))",
       editable: true,
-      extendedProps: {
-        scheduleId: id,
-        isRepeat,
-        color,
-      } as ScheduleExtendedProps,
+      extendedProps: { scheduleId: id, isRepeat, color } as ScheduleExtendedProps,
     };
   });
 
@@ -175,12 +169,12 @@ const CalendarSideMenu = () => {
   return (
     // 월단위 일정 요약 사이드메뉴
     <>
-      <h3 className="mb-2 font-semibold">일정 목록</h3>
+      <h3 className="mb-3 font-bold">일정 목록</h3>
       {/*  해당월의 전체 일정 목록 */}
       <ScrollArea className="h-full flex-1">
         {sortedSchedules.map(([key, schedules]) => (
-          <div key={key} className="mb-4">
-            <p className="mb-2 text-sm">{key}</p>
+          <div key={key} className="mb-5">
+            <p className="mb-2 text-sm font-medium">{key}</p>
             {schedules.map((schedule) => (
               <Link
                 key={schedule.id}

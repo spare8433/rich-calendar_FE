@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { ChevronDown, LogOut, RotateCw, Trash2 } from "lucide-react";
 
 import { logout } from "@/actions";
-import Sign from "@/components/sign";
+import Sign from "@/app/components/sign";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,11 +15,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@/app/components/ui/alert-dialog";
+import { Button, buttonVariants } from "@/app/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import { Separator } from "@/app/components/ui/separator";
+import { Skeleton } from "@/app/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
 import { handleMutationError } from "@/lib/utils";

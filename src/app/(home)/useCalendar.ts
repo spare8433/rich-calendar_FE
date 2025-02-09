@@ -34,14 +34,9 @@ export interface ScheduleEvent extends EventImpl {
   extendedProps: ScheduleExtendedProps;
 }
 
-interface ModifyCalendarScheduleVariables {
-  req: ModifyCalendarScheduleReq;
-  pathParam: string;
-}
-
 export default function useCalendar(calendarRef: RefObject<FullCalendar | null>) {
   const router = useRouter();
-  const { currentDate, viewType, updateDateObj } = useCalendarContext();
+  const { currentDate, viewType, updateDateObj, updateClickedDate } = useCalendarContext();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [scheduleChange, setScheduleChange] = useState<ScheduleChangeObject | null>(null);
 
@@ -68,6 +63,7 @@ export default function useCalendar(calendarRef: RefObject<FullCalendar | null>)
     // CSS 변수를 이벤트 DOM 요소에 인라인으로 설정
     info.el.style.setProperty("--schedule-background", `var(--${color}-background)`);
     info.el.style.setProperty("--schedule", `var(--${color})`);
+    info.el.style.setProperty("--text-color", `var(--foreground)`);
   };
 
   const onEventClick = (arg: EventClickArg) => {
@@ -79,7 +75,10 @@ export default function useCalendar(calendarRef: RefObject<FullCalendar | null>)
     info.el.style.setProperty("cursor", "pointer");
   };
 
-  const onDateClick = (arg: DateClickArg) => router.push("/schedules/add");
+  const onDateClick = (arg: DateClickArg) => {
+    updateClickedDate(arg.date);
+    router.push("/schedules/add");
+  };
 
   // Fullcalendar props 객체
   const calendarOption: CalendarOptions & { ref: RefObject<FullCalendar | null> } = {

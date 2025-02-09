@@ -9,8 +9,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { buttonVariants, LoadingButton } from "@/components/ui/button";
+} from "@/app/components/ui/alert-dialog";
+import { buttonVariants, LoadingButton } from "@/app/components/ui/button";
 
 type Props = {
   open: boolean;

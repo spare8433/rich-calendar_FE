@@ -17,6 +17,23 @@ export const COLORS = [
   "coral",
 ] as const;
 
+export const REPEAT_FREQUENCY = ["daily", "weekly", "monthly", "yearly"] as const;
+export const REPEAT_FREQUENCY_TYPE = {
+  weekly: "주",
+  daily: "일",
+  monthly: "월",
+  yearly: "년",
+} as const;
+
+export const IMPORTANCE_TYPE = {
+  veryLow: "매우 낮음",
+  low: "낮음",
+  medium: "보통",
+  high: "중요",
+  veryHigh: "매우 중요",
+} as const;
+export const IMPORTANCE = ["veryLow", "low", "medium", "high", "veryHigh"] as const;
+
 export const INVALID_TYPE_ERROR = { message: "부적절한 값입니다." };
 
 export const TERMS = `

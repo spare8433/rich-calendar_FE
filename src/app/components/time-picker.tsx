@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/input";
+import { Input } from "@/app/components/ui/input";
 import { cn } from "@/lib/utils";
 
 export default function TimePicker({ className, ...rest }: React.ComponentProps<"input">) {

@@ -5,76 +5,72 @@ import { ChangeEvent, ReactNode, useState } from "react";
 import { SubmitErrorHandler, SubmitHandler, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
-import BasicLoader from "@/components/basic-loader";
-import DateTimePicker from "@/components/date-time-picker";
-import RepeatFieldGroup from "@/components/schedule/schedule-form/repeat-field-group";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
-import { COLORS, INVALID_TYPE_ERROR } from "@/constants";
+import BasicLoader from "@/app/components/basic-loader";
+import DateTimePicker from "@/app/components/date-time-picker";
+import RepeatFieldGroup from "@/app/components/schedule/schedule-form/repeat-field-group";
+import { Button } from "@/app/components/ui/button";
+import { Checkbox } from "@/app/components/ui/checkbox";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/components/ui/form";
+import { Input } from "@/app/components/ui/input";
+import { Label } from "@/app/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
+import { Separator } from "@/app/components/ui/separator";
+import { Textarea } from "@/app/components/ui/textarea";
+import { COLORS, IMPORTANCE, IMPORTANCE_TYPE, INVALID_TYPE_ERROR, REPEAT_FREQUENCY } from "@/constants";
 import apiRequest from "@/lib/api";
-import { getDefaultFormatDate, modifyOnlyDate, modifyOnlyTime } from "@/lib/date";
+import { modifyOnlyDate, modifyOnlyTime } from "@/lib/date";
 import { getScheduleColorVariable } from "@/lib/utils";
 
-const baseUpdateSchema = z.object({
-  title: z
-    .string()
-    .max(50, { message: "제목은 최대 50자까지 작성가능합니다." })
-    .min(2, { message: "제목은 최소 2자 이상 작성해야합니다." }),
-  color: z.enum([...COLORS], INVALID_TYPE_ERROR),
-  startDate: z.string().refine((startDate) => dayjs(startDate).isValid(), {
-    ...INVALID_TYPE_ERROR,
-    path: ["startDate"],
-  }),
-  endDate: z.string().refine((endDate) => dayjs(endDate).isValid(), {
-    ...INVALID_TYPE_ERROR,
-    path: ["endDate"],
-  }),
-  description: z
-    .string()
-    .max(200, { message: "설명은 최대 200자까지 작성가능합니다." })
-    .min(2, { message: "설명은 최소 2자 이상 작성해야합니다." }),
-  tags: z.array(
-    z.object(
-      {
-        id: z.number(),
-        title: z.string(),
-      },
-      INVALID_TYPE_ERROR,
-    ),
-  ),
-  importance: z.enum(["veryLow", "low", "medium", "high", "veryHigh"], INVALID_TYPE_ERROR),
-});
+export const scheduleSchema = z
+  .object({
+    title: z
+      .string()
+      .max(50, { message: "제목은 최대 50자까지 작성가능합니다." })
+      .min(2, { message: "제목은 최소 2자 이상 작성해야합니다." }),
+    color: z.enum([...COLORS], INVALID_TYPE_ERROR),
+    startDate: z.string().refine((startDate) => dayjs(startDate).isValid(), {
+      ...INVALID_TYPE_ERROR,
+      path: ["startDate"],
+    }),
+    endDate: z.string().refine((endDate) => dayjs(endDate).isValid(), {
+      ...INVALID_TYPE_ERROR,
+      path: ["endDate"],
+    }),
+    description: z
+      .string()
+      .max(200, { message: "설명은 최대 200자까지 작성가능합니다." })
+      .min(2, { message: "설명은 최소 2자 이상 작성해야합니다." }),
+    tags: z.array(z.object({ id: z.number(), title: z.string() }, INVALID_TYPE_ERROR)),
+    importance: z.enum(IMPORTANCE, INVALID_TYPE_ERROR),
+    isRepeat: z.enum(["yes", "no"], INVALID_TYPE_ERROR),
+    repeatInterval: z.coerce
+      .number()
+      .min(1, { message: "반복 횟수 최소값은 1입니다." })
+      .max(30, { message: "반복 횟수 최대값은 30입니다." })
+      .optional(),
+    repeatFrequency: z.enum(REPEAT_FREQUENCY, INVALID_TYPE_ERROR).optional(),
+    repeatEndCount: z.coerce
+      .number()
+      .min(1, { message: "반복 종료 횟수 최소값은 1입니다." })
+      .max(30, { message: "반복 종료 횟수 최대값은 30입니다." })
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.isRepeat === "yes") {
+        // "yes 일 경우 반복 관련 필드의 값이 존재하지 않을 경우 오류 설정"
+        return !!data.repeatInterval && !!data.repeatFrequency && !!data.repeatEndCount;
+      }
+      return true; // "no 일 경우 반복 관련 필드의 값이 존재하든 아니든 요청과정에서 무시됨"
+    },
+    {
+      message: "반복 일정일 경우 반복 관련 필드들은 필수입니다.",
+      path: ["isRepeat"], // 첫 번째 문제 발생 위치 (필요에 따라 변경 가능)
+    },
+  );
 
-const updateRepeatSchema = baseUpdateSchema.extend({
-  isRepeat: z.literal("yes"),
-  repeatInterval: z.coerce
-    .number()
-    .min(1, { message: "반복 횟수 최소값은 1입니다." })
-    .max(30, { message: "반복 횟수 최대값은 30입니다." }),
-  repeatFrequency: z.enum(["daily", "weekly", "monthly", "yearly"], INVALID_TYPE_ERROR),
-  repeatEndCount: z.coerce
-    .number()
-    .min(1, { message: "반복 종료 횟수 최소값은 1입니다." })
-    .max(30, { message: "반복 종료 횟수 최대값은 30입니다." }),
-});
-
-const updateNoRepeatSchema = baseUpdateSchema.extend({
-  isRepeat: z.literal("no"),
-  repeatFrequency: z.undefined(),
-  repeatInterval: z.undefined(),
-  repeatEndCount: z.undefined(),
-});
-
-export const updateScheduleSchema = z.union([updateRepeatSchema, updateNoRepeatSchema]);
-
-export type FormValues = z.infer<typeof updateScheduleSchema>;
+export type FormValues = z.infer<typeof scheduleSchema>;
 
 interface ScheduleFormProps {
   children: ReactNode;
@@ -162,14 +158,14 @@ const DateRangeField = () => {
 
   // 날짜 변경 이벤트 핸들러
   const handleChangeDate = (type: "startDate" | "endDate", date: Date) => {
-    const updatedDateTime = getDefaultFormatDate(modifyOnlyDate(getValues()[type], date));
+    const updatedDateTime = modifyOnlyDate(getValues()[type], date).toString();
     setValue(type, updatedDateTime);
     trigger(["startDate", "endDate"]); // 유효성 검사
   };
 
   // 시간 변경 이벤트 핸들러
   const handleChangeTime = (type: "startDate" | "endDate", e: ChangeEvent<HTMLInputElement>) => {
-    const updatedDateTime = getDefaultFormatDate(modifyOnlyTime(getValues()[type], e.currentTarget.value));
+    const updatedDateTime = modifyOnlyTime(getValues()[type], e.currentTarget.value).toString();
     setValue(type, updatedDateTime);
     trigger(["startDate", "endDate"]); // 유효성 검사
   };
@@ -321,14 +317,6 @@ const TagsField = () => {
     </div>
   );
 };
-
-const IMPORTANCE_TYPE = {
-  veryLow: "매우 낮음",
-  low: "낮음",
-  medium: "보통",
-  high: "중요",
-  veryHigh: "매우 중요",
-} as const;
 
 const ImportanceField = () => {
   const { control, trigger } = useFormContext<FormValues>();

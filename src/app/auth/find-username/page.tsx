@@ -7,9 +7,9 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button, LoadingButton } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Button, LoadingButton } from "@/app/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/components/ui/form";
+import { Input } from "@/app/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
 import { handleMutationError } from "@/lib/utils";

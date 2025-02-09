@@ -18,11 +18,13 @@ interface CalendarControls {
   currentDate: string;
   startDate: string;
   endDate: string;
+  clickedDate: string | null;
   calendarTitle: string;
   calendarRef: RefObject<FullCalendar | null>;
   updateCheckedTagIds: (ids: number[]) => void;
   updateDateObj: (startDate: InputDateType, endDate: InputDateType) => void;
   updateCurrentDate: (currentDate: InputDateType) => void;
+  updateClickedDate: (clickedDate: InputDateType) => void;
   moveCalendar: (type: "next" | "prev") => void;
   changeView: (mode: CalendarViewType) => void;
   updateTagChecked: (checked: CheckedState, id: number) => void;
@@ -67,6 +69,7 @@ export function useCalendarControls(calendarRef: RefObject<FullCalendar | null>)
   const [dateObj, setDateObj] = useState<CalendarDateState>(getMonthDateRange(dayjs().toString()));
   const [currentDate, setCurrentDate] = useState(dayjs().toISOString());
   const { startDate, endDate } = dateObj;
+  const [clickedDate, setClickedDate] = useState<string | null>(null);
 
   const updateCalendarTitle = (dateObj: CalendarDateState & { currentDate: string }, viewType: CalendarViewType) => {
     const { currentDate, startDate, endDate } = dateObj;
@@ -90,6 +93,7 @@ export function useCalendarControls(calendarRef: RefObject<FullCalendar | null>)
   };
   const updateCurrentDate = (currentDate: InputDateType) => setCurrentDate(dayjs(currentDate).toISOString());
   const updateCheckedTagIds = (ids: number[]) => setCheckedTagIds(ids);
+  const updateClickedDate = (clickedDate: InputDateType) => setClickedDate(dayjs(clickedDate).format("YYYY-MM-DD"));
 
   const updateTagChecked = (checked: CheckedState, id: number) => {
     const checkedTagIdsSet = new Set(checkedTagIds);
@@ -136,10 +140,12 @@ export function useCalendarControls(calendarRef: RefObject<FullCalendar | null>)
     currentDate,
     startDate,
     endDate,
+    clickedDate,
     calendarTitle,
     updateDateObj,
     updateCheckedTagIds,
     updateCurrentDate,
+    updateClickedDate,
     moveCalendar,
     changeView,
     updateTagChecked,

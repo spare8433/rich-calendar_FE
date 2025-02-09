@@ -3,10 +3,10 @@ import { CalendarIcon } from "lucide-react";
 import * as React from "react";
 import { DayPickerSingleProps } from "react-day-picker";
 
-import { Button, ButtonProps } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { FormControl } from "@/components/ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button, ButtonProps } from "@/app/components/ui/button";
+import { Calendar } from "@/app/components/ui/calendar";
+import { FormControl } from "@/app/components/ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 const DatePicker = (props: PopoverProps) => <Popover {...props} />;

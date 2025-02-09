@@ -1,7 +1,7 @@
 import { AlertTriangle, CheckCircle, Info, XCircle } from "lucide-react";
 import { ComponentProps, JSX } from "react";
 
-import { Toast } from "@/components/ui/toast";
+import { Toast } from "@/app/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 const variantObject: Record<string, { icon: JSX.Element; duration: number }> = {

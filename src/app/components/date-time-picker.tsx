@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import { DayPickerSingleProps } from "react-day-picker";
 
-import { DatePicker, DatePickerContent, DatePickerTrigger } from "@/components/date-picker";
-import TimePicker from "@/components/time-picker";
+import { DatePicker, DatePickerContent, DatePickerTrigger } from "@/app/components/date-picker";
+import TimePicker from "@/app/components/time-picker";
 
 interface Props {
   date: string | Date;
@@ -20,7 +20,7 @@ function DateTimePicker({ date, dateAriaLabel, datePickerProps, timePickerProps 
         <DatePickerTrigger aria-label={`${dateAriaLabel} 년, 월, 일 선택`} className={className}>
           {dayjs(date).format("YYYY-MM-DD")}
         </DatePickerTrigger>
-        <DatePickerContent value={new Date(date)} showOutsideDays={false} {...rest} />
+        <DatePickerContent value={dayjs(date).toDate()} showOutsideDays={false} {...rest} />
       </DatePicker>
 
       {/* time picker */}

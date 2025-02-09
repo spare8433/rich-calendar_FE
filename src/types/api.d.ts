@@ -91,9 +91,19 @@ interface GetSummarySchedulesRes {
   schedules: SummarySchedule[];
 }
 
-type CreateRepeatScheduleReq = BasicCreateScheduleReq & RepeatOptions;
+type CreateRepeatScheduleReq = BasicCreateScheduleReq & {
+  isRepeat: true;
+  repeatFrequency: RepeatFrequencyType;
+  repeatInterval: number;
+  repeatEndCount: number;
+};
 
-type CreateNoRepeatScheduleReq = BasicCreateScheduleReq & NoRepeatOptions;
+type CreateNoRepeatScheduleReq = BasicCreateScheduleReq & {
+  isRepeat: false;
+  repeatFrequency: null;
+  repeatInterval: null;
+  repeatEndCount: null;
+};
 
 type CreateScheduleReq = CreateRepeatScheduleReq | CreateNoRepeatScheduleReq;
 

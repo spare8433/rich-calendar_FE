@@ -4,7 +4,7 @@ import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ErrorInfo, type JSX } from "react";
 import { ErrorBoundary as ReactErrorBoundary } from "react-error-boundary";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/components/ui/button";
 import { CustomError } from "@/lib/customError";
 
 // 통합 에러 핸들링 함수

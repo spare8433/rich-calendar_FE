@@ -4,11 +4,11 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, PanelRightDashed } from "lucide-react";
 
-import BasicLoader from "@/components/basic-loader";
-import ErrorBoundary from "@/components/error-boundary";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
+import BasicLoader from "@/app/components/basic-loader";
+import ErrorBoundary from "@/app/components/error-boundary";
+import { Button } from "@/app/components/ui/button";
+import { Checkbox } from "@/app/components/ui/checkbox";
+import { Select, SelectContent, SelectTrigger, SelectValue } from "@/app/components/ui/select";
 import { useCalendarContext } from "@/contexts/calendar";
 import apiRequest from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -49,7 +49,7 @@ export default function CalendarHeader({ isSideOpen, onClickSideButton }: Props)
 
         {/* 필터링을 위한 태그 체크박스 목록 */}
         <Select>
-          <SelectTrigger className="w-18 h-9 px-3 text-sm" aria-label="일정 필터 선택">
+          <SelectTrigger className="w-18 h-9 px-3 text-sm font-medium" aria-label="일정 필터 선택">
             <SelectValue placeholder="필터링" />
           </SelectTrigger>
           <SelectContent className="p-2 text-sm">
@@ -70,6 +70,7 @@ export default function CalendarHeader({ isSideOpen, onClickSideButton }: Props)
             <Button
               type="button"
               key={data.viewType}
+              className="font-medium"
               variant={viewType === data.viewType ? "default" : "secondary"}
               onClick={() => changeView(data.viewType)}
               aria-label={`${data.viewText} 단위 화면으로`}

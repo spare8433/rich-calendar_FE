@@ -5,16 +5,11 @@ import { DefaultError, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import {
-  SEND_CODE_SCHEMA,
-  SendCodeFormValues,
-  VERIFY_CODE_SCHEMA,
-  VerifyCodeFormValues,
-} from "@/components/auth/schemas";
-import { LoadingButton } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { SEND_CODE_SCHEMA, SendCodeFormValues, VERIFY_CODE_SCHEMA, VerifyCodeFormValues } from "@/app/auth/schemas";
+import { LoadingButton } from "@/app/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/app/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/components/ui/form";
+import { Input } from "@/app/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
 import { handleMutationError } from "@/lib/utils";

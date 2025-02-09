@@ -7,12 +7,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import BasicLoader from "@/components/basic-loader";
-import ErrorBoundary from "@/components/error-boundary";
-import { ChangeConfirm, DeleteConfirm } from "@/components/schedule/confirms";
-import { FormValues, ScheduleForm, updateScheduleSchema } from "@/components/schedule/schedule-form";
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
+import BasicLoader from "@/app/components/basic-loader";
+import ErrorBoundary from "@/app/components/error-boundary";
+import { ChangeConfirm, DeleteConfirm } from "@/app/components/schedule/add/confirms";
+import { FormValues, ScheduleForm, scheduleSchema } from "@/app/components/schedule/schedule-form";
+import { Button } from "@/app/components/ui/button";
+import { Form } from "@/app/components/ui/form";
 import apiRequest from "@/lib/api";
 
 export default function ScheduleDetail({ scheduleId }: { scheduleId: number }) {
@@ -59,7 +59,7 @@ const ScheduleDetailForm = ({ scheduleId, data }: { scheduleId: number; data: Ge
       : { isRepeat: "no", repeatFrequency: undefined, repeatInterval: undefined, repeatEndCount: undefined }),
   };
 
-  const form = useForm<FormValues>({ resolver: zodResolver(updateScheduleSchema), defaultValues, mode: "onBlur" });
+  const form = useForm<FormValues>({ resolver: zodResolver(scheduleSchema), defaultValues, mode: "onBlur" });
   const { formState, getValues } = form;
   const { isDirty, isValid } = formState;
 
@@ -100,7 +100,6 @@ const ScheduleDetailForm = ({ scheduleId, data }: { scheduleId: number; data: Ge
       <DeleteConfirm
         open={deleteConfirmOpen}
         scheduleId={scheduleId}
-        isRepeat={defaultValues.isRepeat === "yes"}
         onOpenChange={(open: boolean) => setDeleteConfirmOpen(open)}
       />
     </Form>
