@@ -8,6 +8,10 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
+  if (req.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/schedules", req.url));
+  }
+
   return NextResponse.next(); // 인증 통과
 }
 

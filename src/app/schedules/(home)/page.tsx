@@ -8,13 +8,13 @@ import { FileX2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import CalendarHeader from "@/app/(home)/calendar-header";
-import useCalendar, { ScheduleExtendedProps, ScheduleInput } from "@/app/(home)/useCalendar";
 import BasicLoader from "@/app/components/basic-loader";
 import ErrorBoundary from "@/app/components/error-boundary";
 import ScheduleConfirmModal from "@/app/components/schedule-confirm-modal";
 import { Button } from "@/app/components/ui/button";
 import { ScrollArea } from "@/app/components/ui/scroll-area";
+import CalendarHeader from "@/app/schedules/calendar-header";
+import useCalendar, { ScheduleExtendedProps, ScheduleInput } from "@/app/schedules/useCalendar";
 import { useCalendarContext } from "@/contexts/calendar";
 import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";

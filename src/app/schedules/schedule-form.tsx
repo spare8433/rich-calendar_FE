@@ -7,68 +7,56 @@ import { z } from "zod";
 
 import BasicLoader from "@/app/components/basic-loader";
 import DateTimePicker from "@/app/components/date-time-picker";
-import RepeatFieldGroup from "@/app/components/schedule/schedule-form/repeat-field-group";
 import { Button } from "@/app/components/ui/button";
 import { Checkbox } from "@/app/components/ui/checkbox";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/components/ui/form";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/app/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
 import { Separator } from "@/app/components/ui/separator";
 import { Textarea } from "@/app/components/ui/textarea";
+import { REPEAT_FREQUENCY_TYPE } from "@/constants";
 import { COLORS, IMPORTANCE, IMPORTANCE_TYPE, INVALID_TYPE_ERROR, REPEAT_FREQUENCY } from "@/constants";
 import apiRequest from "@/lib/api";
 import { modifyOnlyDate, modifyOnlyTime } from "@/lib/date";
+import { cn } from "@/lib/utils";
 import { getScheduleColorVariable } from "@/lib/utils";
 
-export const scheduleSchema = z
-  .object({
-    title: z
-      .string()
-      .max(50, { message: "제목은 최대 50자까지 작성가능합니다." })
-      .min(2, { message: "제목은 최소 2자 이상 작성해야합니다." }),
-    color: z.enum([...COLORS], INVALID_TYPE_ERROR),
-    startDate: z.string().refine((startDate) => dayjs(startDate).isValid(), {
-      ...INVALID_TYPE_ERROR,
-      path: ["startDate"],
-    }),
-    endDate: z.string().refine((endDate) => dayjs(endDate).isValid(), {
-      ...INVALID_TYPE_ERROR,
-      path: ["endDate"],
-    }),
-    description: z
-      .string()
-      .max(200, { message: "설명은 최대 200자까지 작성가능합니다." })
-      .min(2, { message: "설명은 최소 2자 이상 작성해야합니다." }),
-    tags: z.array(z.object({ id: z.number(), title: z.string() }, INVALID_TYPE_ERROR)),
-    importance: z.enum(IMPORTANCE, INVALID_TYPE_ERROR),
-    isRepeat: z.enum(["yes", "no"], INVALID_TYPE_ERROR),
-    repeatInterval: z.coerce
-      .number()
-      .min(1, { message: "반복 횟수 최소값은 1입니다." })
-      .max(30, { message: "반복 횟수 최대값은 30입니다." })
-      .optional(),
-    repeatFrequency: z.enum(REPEAT_FREQUENCY, INVALID_TYPE_ERROR).optional(),
-    repeatEndCount: z.coerce
-      .number()
-      .min(1, { message: "반복 종료 횟수 최소값은 1입니다." })
-      .max(30, { message: "반복 종료 횟수 최대값은 30입니다." })
-      .optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.isRepeat === "yes") {
-        // "yes 일 경우 반복 관련 필드의 값이 존재하지 않을 경우 오류 설정"
-        return !!data.repeatInterval && !!data.repeatFrequency && !!data.repeatEndCount;
-      }
-      return true; // "no 일 경우 반복 관련 필드의 값이 존재하든 아니든 요청과정에서 무시됨"
-    },
-    {
-      message: "반복 일정일 경우 반복 관련 필드들은 필수입니다.",
-      path: ["isRepeat"], // 첫 번째 문제 발생 위치 (필요에 따라 변경 가능)
-    },
-  );
+export const scheduleSchema = z.object({
+  title: z
+    .string()
+    .max(50, { message: "제목은 최대 50자까지 작성가능합니다." })
+    .min(2, { message: "제목은 최소 2자 이상 작성해야합니다." }),
+  color: z.enum([...COLORS], INVALID_TYPE_ERROR),
+  startDate: z.string().refine((startDate) => dayjs(startDate).isValid(), {
+    ...INVALID_TYPE_ERROR,
+    path: ["startDate"],
+  }),
+  endDate: z.string().refine((endDate) => dayjs(endDate).isValid(), {
+    ...INVALID_TYPE_ERROR,
+    path: ["endDate"],
+  }),
+  description: z
+    .string()
+    .max(200, { message: "설명은 최대 200자까지 작성가능합니다." })
+    .min(2, { message: "설명은 최소 2자 이상 작성해야합니다." }),
+  tags: z.array(z.object({ id: z.number(), title: z.string() }, INVALID_TYPE_ERROR)),
+  importance: z.enum(IMPORTANCE, INVALID_TYPE_ERROR),
+  isRepeat: z.enum(["yes", "no"], INVALID_TYPE_ERROR),
+  repeatInterval: z.coerce
+    .number()
+    .min(1, { message: "반복 횟수 최소값은 1입니다." })
+    .max(30, { message: "반복 횟수 최대값은 30입니다." })
+    .optional(),
+  repeatFrequency: z.enum(REPEAT_FREQUENCY, INVALID_TYPE_ERROR).optional(),
+  repeatEndCount: z.coerce
+    .number()
+    .min(1, { message: "반복 종료 횟수 최소값은 1입니다." })
+    .max(30, { message: "반복 종료 횟수 최대값은 30입니다." })
+    .optional(),
+});
 
 export type FormValues = z.infer<typeof scheduleSchema>;
 
@@ -355,5 +343,148 @@ const ImportanceField = () => {
         );
       }}
     />
+  );
+};
+
+const RepeatFieldGroup = () => {
+  const { control, formState, watch, trigger } = useFormContext<FormValues>();
+  const { isRepeat } = watch();
+
+  const getPeriodErrorMessage = () => {
+    const { repeatInterval, repeatFrequency } = formState.errors;
+    if (repeatInterval) return `${repeatInterval.message} -1`;
+    else if (repeatFrequency) return repeatFrequency.message;
+    else return undefined;
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-x-4">
+        <span className="text-sm font-medium">반복</span>
+        {/* 반복 사용 여부 radio group */}
+        <FormField
+          name="isRepeat"
+          control={control}
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                {/* radio group control 영역 */}
+                <RadioGroup
+                  defaultValue={field.value}
+                  className="flex items-center gap-x-4"
+                  // onValueChange={field.onChange}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    return trigger(["isRepeat", "repeatEndCount", "repeatFrequency", "repeatInterval"]);
+                  }}
+                >
+                  {/* "사용" radio button */}
+                  <div className="flex items-center gap-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="yes" />
+                    </FormControl>
+                    <FormLabel className="font-normal">사용</FormLabel>
+                  </div>
+
+                  {/* "사용 안함" radio button */}
+                  <div className="flex items-center gap-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="no" />
+                    </FormControl>
+                    <FormLabel className="font-normal">사용 안함</FormLabel>
+                  </div>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      {/* 종료 옵션 목록 Box : 반복 기준, 종료 기준 */}
+      <div className={cn("flex flex-col gap-y-2 rounded-lg border px-4 py-3", isRepeat === "no" && "hidden")}>
+        {/* 반복 옵션 fields: 반복횟수, 반복주기 */}
+        <div className="flex gap-x-2">
+          <span className="mr-4 text-sm font-medium leading-10">반복 기준</span>
+          <div>
+            <div className="flex gap-x-2">
+              {/* 반복 주기 횟수 input number */}
+              <FormField
+                name="repeatInterval"
+                control={control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={30}
+                        className="w-16"
+                        aria-label="반복 주기 횟수"
+                        {...field}
+                        onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                        value={field.value ?? 1}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {/* 반복 주기 select */}
+              <FormField
+                name="repeatFrequency"
+                control={control}
+                render={({ field }) => (
+                  <Select defaultValue={field.value ?? "weekly"} onValueChange={(value) => field.onChange(value)}>
+                    <FormControl className="w-20">
+                      <SelectTrigger aria-label="반복 주기 선택">
+                        <SelectValue placeholder={field.value} />
+                      </SelectTrigger>
+                    </FormControl>
+
+                    <SelectContent>
+                      {Object.entries(REPEAT_FREQUENCY_TYPE).map(([key, value]) => (
+                        <SelectItem key={key} value={key}>
+                          {value}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+
+            {/* 반복 옵션 fields 통합 에러메시지 */}
+            {getPeriodErrorMessage() && <div className="text-destructive pl-2 text-sm">{getPeriodErrorMessage()}</div>}
+          </div>
+        </div>
+
+        {/* 종료 기준 fields */}
+        <div className="flex gap-x-2">
+          <span className="mr-4 text-sm font-medium leading-10">일정 반복 횟수</span>
+          <FormField
+            control={control}
+            name="repeatEndCount"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={30}
+                    className="w-16"
+                    aria-label="반복 종료 횟수"
+                    {...field}
+                    value={field.value ?? 1}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  />
+                </FormControl>
+                {!field.disabled && <FormMessage />}
+              </FormItem>
+            )}
+          />
+        </div>
+      </div>
+    </div>
   );
 };

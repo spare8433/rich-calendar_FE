@@ -3,33 +3,35 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import BasicLoader from "@/app/components/basic-loader";
 import ErrorBoundary from "@/app/components/error-boundary";
-import { ChangeConfirm, DeleteConfirm } from "@/app/components/schedule/add/confirms";
-import { FormValues, ScheduleForm, scheduleSchema } from "@/app/components/schedule/schedule-form";
 import { Button } from "@/app/components/ui/button";
 import { Form } from "@/app/components/ui/form";
+import { ChangeConfirm, DeleteConfirm } from "@/app/schedules/add/confirms";
+import { FormValues, ScheduleForm, scheduleSchema } from "@/app/schedules/schedule-form";
 import apiRequest from "@/lib/api";
 
-export default function ScheduleDetail({ scheduleId }: { scheduleId: number }) {
+export default function ScheduleDetail() {
+  const { sid } = useParams<{ sid: string }>();
+
   const router = useRouter();
 
   // 개인 일정 상세 정보 조회 api
   const { data, isSuccess } = useQuery({
     throwOnError: true,
-    queryKey: ["scheduleDetail", scheduleId],
-    queryFn: () => apiRequest("getSchedule", undefined, scheduleId.toString()),
+    queryKey: ["scheduleDetail", sid],
+    queryFn: () => apiRequest("getSchedule", undefined, sid),
   });
 
   return (
     <div className="absolute left-0 top-0 z-10 flex size-full flex-col bg-white">
       {/* content title */}
       <div className="border-b-muted flex h-12 items-center space-x-1 border border-b-2">
-        <Button type="button" variant="image-icon-active" size="sm" onClick={router.back}>
+        <Button type="button" variant="image-icon-active" size="sm" onClick={() => router.push("/")}>
           <ArrowLeft size={24} />
         </Button>
         <h1 className="text-lg font-medium">일정 상세 정보</h1>
@@ -38,7 +40,7 @@ export default function ScheduleDetail({ scheduleId }: { scheduleId: number }) {
       {/* 일정 상세 정보 Form content */}
       <div className="size-full overflow-y-auto px-6 py-4">
         <ErrorBoundary>
-          {isSuccess ? <ScheduleDetailForm scheduleId={scheduleId} data={data} /> : <BasicLoader />}
+          {isSuccess ? <ScheduleDetailForm scheduleId={Number(sid)} data={data} /> : <BasicLoader />}
         </ErrorBoundary>
       </div>
     </div>

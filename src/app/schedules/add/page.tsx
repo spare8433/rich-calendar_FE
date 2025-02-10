@@ -8,9 +8,9 @@ import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import ErrorBoundary from "@/app/components/error-boundary";
-import { FormValues, ScheduleForm, scheduleSchema } from "@/app/components/schedule/schedule-form";
 import { Button, LoadingButton } from "@/app/components/ui/button";
 import { Form } from "@/app/components/ui/form";
+import { FormValues, ScheduleForm, scheduleSchema } from "@/app/schedules/schedule-form";
 import { REPEAT_FREQUENCY } from "@/constants";
 import { useCalendarContext } from "@/contexts/calendar";
 import { useToast } from "@/hooks/use-toast";
@@ -21,9 +21,9 @@ interface CreateScheduleVariables {
   req: CreateScheduleReq;
 }
 
-export default function ScheduleAdd({ clickedDate }: { clickedDate?: string }) {
+export default function ScheduleAdd() {
   const queryClient = useQueryClient();
-  const { checkedTagIds, startDate, endDate } = useCalendarContext();
+  const { checkedTagIds, startDate, endDate, clickedDate } = useCalendarContext();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -88,7 +88,7 @@ export default function ScheduleAdd({ clickedDate }: { clickedDate?: string }) {
     <div className="absolute left-0 top-0 z-10 flex size-full flex-col bg-white">
       {/* content title */}
       <div className="border-b-muted flex h-12 items-center space-x-1 border border-b-2">
-        <Button type="button" variant="image-icon-active" size="sm" onClick={router.back}>
+        <Button type="button" variant="image-icon-active" size="sm" onClick={() => router.push("/")}>
           <ArrowLeft size={24} />
         </Button>
         <h1 className="text-lg font-medium">새 일정 생성</h1>
