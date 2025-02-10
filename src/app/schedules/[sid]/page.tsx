@@ -11,7 +11,7 @@ import BasicLoader from "@/app/components/basic-loader";
 import ErrorBoundary from "@/app/components/error-boundary";
 import { Button } from "@/app/components/ui/button";
 import { Form } from "@/app/components/ui/form";
-import { ChangeConfirm, DeleteConfirm } from "@/app/schedules/add/confirms";
+import { ChangeConfirm, DeleteConfirm } from "@/app/schedules/[sid]/confirms";
 import { FormValues, ScheduleForm, scheduleSchema } from "@/app/schedules/schedule-form";
 import apiRequest from "@/lib/api";
 
@@ -58,7 +58,7 @@ const ScheduleDetailForm = ({ scheduleId, data }: { scheduleId: number; data: Ge
     ...rest,
     ...(isRepeat
       ? { isRepeat: "yes", repeatFrequency, repeatInterval, repeatEndCount }
-      : { isRepeat: "no", repeatFrequency: undefined, repeatInterval: undefined, repeatEndCount: undefined }),
+      : { isRepeat: "no", repeatFrequency: "weekly", repeatInterval: 1, repeatEndCount: 1 }),
   };
 
   const form = useForm<FormValues>({ resolver: zodResolver(scheduleSchema), defaultValues, mode: "onBlur" });

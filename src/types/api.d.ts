@@ -15,7 +15,7 @@ interface GetScheduleParam {
 interface BasicScheduleDetail {
   id: number;
   title: string;
-  description?: string;
+  description: string;
   importance: ScheduleImportanceType;
   color: ColorType;
   tags: Tag[];
