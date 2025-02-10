@@ -7,16 +7,16 @@ import { ReactNode, useState } from "react";
 import { useForm, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
-import VerifyEmailModal from "@/components/auth/signup/verify-modal";
+import VerifyEmailModal from "@/app/auth/signup/verify-modal";
 import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button, LoadingButton } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "@/app/components/ui/alert-dialog";
+import { Button, LoadingButton } from "@/app/components/ui/button";
+import { Checkbox } from "@/app/components/ui/checkbox";
 import {
   CustomFormMessage,
   Form,
@@ -25,9 +25,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/app/components/ui/form";
+import { Input } from "@/app/components/ui/input";
+import { Textarea } from "@/app/components/ui/textarea";
 import { SERVICE, TERMS } from "@/constants";
 import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";

@@ -3,8 +3,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 
-import Providers from "@/components/providers";
-import { Toaster } from "@/components/ui/toaster";
+import Providers from "@/app/components/providers";
+import { Toaster } from "@/app/components/ui/toaster";
 import { cn } from "@/lib/utils";
 
 const pretendard = localFont({
