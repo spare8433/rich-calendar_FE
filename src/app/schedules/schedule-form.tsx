@@ -46,13 +46,13 @@ export const scheduleSchema = z.object({
   importance: z.enum(IMPORTANCE, INVALID_TYPE_ERROR),
   isRepeat: z.enum(["yes", "no"], INVALID_TYPE_ERROR),
   repeatInterval: z.coerce
-    .number()
+    .number(INVALID_TYPE_ERROR)
     .min(1, { message: "반복 횟수 최소값은 1입니다." })
     .max(30, { message: "반복 횟수 최대값은 30입니다." })
     .optional(),
   repeatFrequency: z.enum(REPEAT_FREQUENCY, INVALID_TYPE_ERROR).optional(),
   repeatEndCount: z.coerce
-    .number()
+    .number(INVALID_TYPE_ERROR)
     .min(1, { message: "반복 종료 횟수 최소값은 1입니다." })
     .max(30, { message: "반복 종료 횟수 최대값은 30입니다." })
     .optional(),
@@ -352,7 +352,7 @@ const RepeatFieldGroup = () => {
 
   const getPeriodErrorMessage = () => {
     const { repeatInterval, repeatFrequency } = formState.errors;
-    if (repeatInterval) return `${repeatInterval.message} -1`;
+    if (repeatInterval) return repeatInterval.message;
     else if (repeatFrequency) return repeatFrequency.message;
     else return undefined;
   };

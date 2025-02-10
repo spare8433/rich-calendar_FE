@@ -96,9 +96,13 @@ const ChangeConfirm = ({ open, scheduleId, defaultValues, onOpenChange }: Change
       open={open}
       title="일정을 수정하시겠습니까?"
       description={
-        formValues.isRepeat
-          ? "최종확인 후 일정이 수정되며 변경 내용은 반복 일정 전체에 적용됩니다."
-          : "최종확인 후 일정이 수정됩니다."
+        formValues.isRepeat ? (
+          <>
+            최종확인 후 일정이 수정되며 <b>변경 내용은 반복된 일정 전체에 적용</b>됩니다.
+          </>
+        ) : (
+          "최종확인 후 일정이 수정됩니다."
+        )
       }
       isLoading={isPending}
       onAction={onModify}
@@ -112,6 +116,8 @@ interface DeleteScheduleVariables {
 }
 
 const DeleteConfirm = ({ open, scheduleId, onOpenChange }: BasicConfirmProps) => {
+  const { watch } = useFormContext<FormValues>();
+  const formValues = watch();
   const mutationCallbacks = useMutationCallbacks("일정 삭제", () => onOpenChange(false));
 
   // 일정 삭제 mutation
@@ -126,7 +132,15 @@ const DeleteConfirm = ({ open, scheduleId, onOpenChange }: BasicConfirmProps) =>
     <ScheduleConfirmModal
       open={open}
       title="일정을 삭제하시겠습니까?"
-      description="최종확인 후 일정이 삭제됩니다."
+      description={
+        formValues.isRepeat ? (
+          <>
+            최종확인 후 일정이 삭제되며 <b>반복된 일정도 모두 삭제</b>됩니다.
+          </>
+        ) : (
+          "최종확인 후 일정이 삭제됩니다."
+        )
+      }
       isLoading={isPending}
       onAction={onDelete}
       onOpenChange={onOpenChange}

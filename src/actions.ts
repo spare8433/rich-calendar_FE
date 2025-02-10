@@ -5,6 +5,6 @@ import { redirect } from "next/navigation";
 
 export async function logout() {
   const cookie = await cookies();
-  cookie.delete("authToken");
-  redirect("auth/login");
+  cookie.delete("token");
+  redirect("/auth/login");
 }
