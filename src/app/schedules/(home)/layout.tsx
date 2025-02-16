@@ -15,9 +15,7 @@ export default function Layout({ children }: Props) {
     <div className="absolute flex size-full flex-col overflow-hidden">
       <Header />
 
-      <div className="relative flex flex-1">
-        <main className="relative flex-1 ">{children}</main>
-      </div>
+      <main className="relative flex-1">{children}</main>
     </div>
   );
 }

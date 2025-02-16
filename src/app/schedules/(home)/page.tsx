@@ -30,13 +30,14 @@ export default function ScheduleCalendar() {
   const [isSideOpen, setIsSideOpen] = useState(false);
 
   return (
-    <div className="relative z-0 flex size-full flex-1">
+    <div className="absolute z-0 flex size-full flex-col">
       {/* 캘린더 전체 */}
-      <div className="absolute flex size-full flex-col ">
-        {/* 캘린더 조작을 위한 header 부분 */}
-        <CalendarHeader isSideOpen={isSideOpen} onClickSideButton={() => setIsSideOpen((prev) => !prev)} />
 
-        <div className="flex h-full flex-1">
+      {/* 캘린더 조작을 위한 header 부분 */}
+      <CalendarHeader isSideOpen={isSideOpen} onClickSideButton={() => setIsSideOpen((prev) => !prev)} />
+
+      <div className="flex h-full flex-1">
+        <div className="absolute flex size-full">
           {/* calendar */}
           <ErrorBoundary
             FallbackComponent={({ resetErrorBoundary }) => (
@@ -51,10 +52,9 @@ export default function ScheduleCalendar() {
           >
             <CalendarContent />
           </ErrorBoundary>
-
           {isSideOpen && (
             // 사이드 메뉴
-            <aside className="border-box flex h-full w-72 flex-col border-l p-4 lg:inline-block">
+            <aside className="flex h-full w-72 flex-col border-l p-4">
               <ErrorBoundary>
                 <CalendarSideMenu />
               </ErrorBoundary>
