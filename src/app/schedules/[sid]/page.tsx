@@ -11,6 +11,7 @@ import BasicLoader from "@/app/components/basic-loader";
 import ErrorBoundary from "@/app/components/error-boundary";
 import { Button } from "@/app/components/ui/button";
 import { Form } from "@/app/components/ui/form";
+import { ScrollArea } from "@/app/components/ui/scroll-area";
 import { ChangeConfirm, DeleteConfirm } from "@/app/schedules/[sid]/confirms";
 import { FormValues, ScheduleForm, scheduleSchema } from "@/app/schedules/schedule-form";
 import apiRequest from "@/lib/api";
@@ -28,7 +29,7 @@ export default function ScheduleDetail() {
   });
 
   return (
-    <div className="absolute left-0 top-0 z-10 flex size-full flex-col bg-white">
+    <div className="absolute left-0 top-0 z-10 flex size-full flex-col overflow-hidden bg-white">
       {/* content title */}
       <div className="border-b-muted flex h-12 items-center space-x-1 border border-b-2">
         <Button type="button" variant="image-icon-active" size="sm" onClick={() => router.push("/")}>
@@ -38,11 +39,11 @@ export default function ScheduleDetail() {
       </div>
 
       {/* 일정 상세 정보 Form content */}
-      <div className="size-full overflow-y-auto px-6 py-4">
+      <ScrollArea className="overflow-y-auto px-6 py-4">
         <ErrorBoundary>
           {isSuccess ? <ScheduleDetailForm scheduleId={Number(sid)} data={data} /> : <BasicLoader />}
         </ErrorBoundary>
-      </div>
+      </ScrollArea>
     </div>
   );
 }
