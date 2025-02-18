@@ -99,10 +99,10 @@ const CalendarContent = () => {
   if (!isSuccess) return <BasicLoader />;
 
   const events: ScheduleInput[] = data.schedules.map((sch) => {
-    const { id, startAt, endAt, color, isRepeat } = sch;
+    const { id, title, startAt, endAt, color, isRepeat } = sch;
     return {
       id: `${id}-${startAt}`,
-      title: sch.title,
+      title: title,
       classNames: `border-2 pl-1 text-foreground font-bold`,
       // 시간 단위로 설정된 일정은 캘린더에서 editable 이 일부 제한되므로 자정 즉 일단위로 설정된 일정은 시간 단위를 제거하여 사용
       start: changeDateIfMidnight(startAt),
@@ -111,7 +111,7 @@ const CalendarContent = () => {
       borderColor: "hsl(var(--schedule))",
       textColor: "hsl(var(--text-color))",
       editable: true,
-      extendedProps: { scheduleId: id, isRepeat, color } as ScheduleExtendedProps,
+      extendedProps: { scheduleId: id, isRepeat, color, startAt, endAt } as ScheduleExtendedProps,
     };
   });
 

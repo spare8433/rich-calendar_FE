@@ -1,8 +1,8 @@
 "use client";
 
 import { DefaultError, useMutation, UseMutationOptions, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import React from "react";
+import dayjs from "dayjs";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useFormContext } from "react-hook-form";
 
 import ScheduleConfirmModal from "@/app/components/schedule-confirm-modal";
@@ -63,6 +63,10 @@ interface ModifyScheduleVariables {
 }
 
 const ChangeConfirm = ({ open, scheduleId, defaultValues, onOpenChange }: ChangeConfirmProps) => {
+  const searchParams = useSearchParams();
+  const startAt = searchParams.get("startAt");
+  const endAt = searchParams.get("endAt");
+
   const { watch } = useFormContext<FormValues>();
   const formValues = watch();
   const mutationCallbacks = useMutationCallbacks("일정 수정", () => onOpenChange(false));
@@ -74,11 +78,16 @@ const ChangeConfirm = ({ open, scheduleId, defaultValues, onOpenChange }: Change
   });
 
   const onModify = () => {
-    const { isRepeat, repeatFrequency, repeatInterval, repeatEndCount, tags, ...rest } = formValues;
+    const { isRepeat, repeatFrequency, repeatInterval, repeatEndCount, tags, startDate, endDate, ...rest } = formValues;
 
-    const request = {
+    const request: UpdateScheduleReq = {
       tagIds: tags.map(({ id }) => id),
       ...rest,
+      startAt: dayjs(startDate).toISOString(),
+      endAt: dayjs(endDate).toISOString(),
+      ...(startAt && endAt
+        ? { beforeStartAt: startAt, beforeEndAt: endAt }
+        : { beforeStartAt: startDate, beforeEndAt: endDate }),
       ...(isRepeat === "yes"
         ? {
             isRepeat: true,
@@ -98,7 +107,7 @@ const ChangeConfirm = ({ open, scheduleId, defaultValues, onOpenChange }: Change
       description={
         formValues.isRepeat ? (
           <>
-            최종확인 후 일정이 수정되며 <b>변경 내용은 반복된 일정 전체에 적용</b>됩니다.
+            최종확인 후 일정이 수정되며 <b className="text-foreground">변경 내용은 반복된 일정 전체에 적용</b>됩니다.
           </>
         ) : (
           "최종확인 후 일정이 수정됩니다."

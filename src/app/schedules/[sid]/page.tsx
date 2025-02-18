@@ -2,8 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
+import { isEqual } from "lodash";
 import { ArrowLeft, Trash2 } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -49,14 +50,19 @@ export default function ScheduleDetail() {
 }
 
 const ScheduleDetailForm = ({ scheduleId, data }: { scheduleId: number; data: GetScheduleRes }) => {
+  const searchParams = useSearchParams();
+  const startAt = searchParams.get("startAt");
+  const endAt = searchParams.get("endAt");
+
   const [confirmOpen, setConfirmOpen] = useState(false); // 일정 수정 확인 모달
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false); // 일정 삭제 확인 모달
 
-  const { isRepeat, repeatFrequency, repeatInterval, repeatEndCount, description, ...rest } = data;
+  const { isRepeat, repeatFrequency, repeatInterval, repeatEndCount, description, startDate, endDate, ...rest } = data;
 
   const defaultValues: FormValues = {
     description: description ?? "",
     ...rest,
+    ...(startAt && endAt ? { startDate: startAt, endDate: endAt } : { startDate, endDate }),
     ...(isRepeat
       ? { isRepeat: "yes", repeatFrequency, repeatInterval, repeatEndCount }
       : { isRepeat: "no", repeatFrequency: "weekly", repeatInterval: 1, repeatEndCount: 1 }),
@@ -64,22 +70,13 @@ const ScheduleDetailForm = ({ scheduleId, data }: { scheduleId: number; data: Ge
 
   const form = useForm<FormValues>({ resolver: zodResolver(scheduleSchema), defaultValues, mode: "onBlur" });
   const { formState, getValues } = form;
-  const { isDirty, isValid } = formState;
-
-  const getIsChangeTags = () => {
-    // tag 목록 요소의 개수가 다른 경우 변경됨을 의미하므로 true 반환
-    const { tags: defaultTags } = defaultValues;
-    const tags = getValues("tags");
-
-    if (defaultTags.length !== tags.length) return true;
-
-    const currentIdsSet = new Set(tags.map((tag) => tag.id));
-    // 초기 tag 들의 id 와 현재 form tag 들의 id 목록이 모두 같은 경우 false 반환
-    return !defaultTags.every((tag) => currentIdsSet.has(tag.id));
-  };
+  const { isValid } = formState;
 
   return (
     <Form {...form}>
+      <p className="text-muted-foreground mb-6 font-semibold">
+        ※ 해당 일정은 반복일정으로 변경된 내용이 개별적으로 적용되지 않고 반복된 일정 전체에 적용됩니다.
+      </p>
       <ScheduleForm onSubmit={() => setConfirmOpen(true)}>
         {/* 푸터 버튼 박스 */}
         <div className="mt-4 flex justify-between ">
@@ -87,7 +84,7 @@ const ScheduleDetailForm = ({ scheduleId, data }: { scheduleId: number; data: Ge
             <Trash2 className="mr-2" size={16} />
             일정 삭제
           </Button>
-          <Button size="lg" disabled={!(isDirty || getIsChangeTags()) || !isValid}>
+          <Button size="lg" disabled={isEqual(defaultValues, getValues()) || !isValid}>
             저장
           </Button>
         </div>

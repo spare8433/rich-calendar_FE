@@ -6,7 +6,7 @@ import { createContext, ReactNode, useContext } from "react";
 import { RefObject, useState } from "react";
 
 import { SCHEDULE_VIEW_TYPE } from "@/constants";
-import { convertUstToKST, getMonthDateRange } from "@/lib/date";
+import { getMonthDateRange } from "@/lib/date";
 
 dayjs.extend(utc);
 
@@ -73,12 +73,12 @@ export function useCalendarControls(calendarRef: RefObject<FullCalendar | null>)
 
   const updateCalendarTitle = (dateObj: CalendarDateState & { currentDate: string }, viewType: CalendarViewType) => {
     const { currentDate, startDate, endDate } = dateObj;
-    const currentKstDate = convertUstToKST(currentDate);
+    const currentKstDate = dayjs(currentDate);
 
     // 주어진 view type 에 맞게 각각 calendarTitle 설정 함수 구현
     const viewTypeTitle: Record<string, string> = {
       day: currentKstDate.format("YYYY년 MM월 DD일"),
-      week: `${convertUstToKST(startDate).format("YYYY년 MM월 DD일")} ~ ${convertUstToKST(endDate).format("MM월 DD일")}`,
+      week: `${dayjs(startDate).format("YYYY년 MM월 DD일")} ~ ${dayjs(endDate).format("MM월 DD일")}`,
       month: currentKstDate.format("YYYY년 MM월"),
     };
 

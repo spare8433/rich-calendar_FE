@@ -1,3 +1,7 @@
+interface SchedulePathParam {
+  sid: string;
+}
+
 interface GetSchedulesReq {
   startDate: string; // ISO8601
   endDate: string; // ISO8601
@@ -8,9 +12,7 @@ interface GetSchedulesRes {
   schedules: CalendarSchedule[];
 }
 
-interface GetScheduleParam {
-  sid: string;
-}
+type GetScheduleParam = SchedulePathParam;
 
 interface BasicScheduleDetail {
   id: number;
@@ -43,12 +45,8 @@ interface GetScheduleTagsRes {
   tags: Tag[];
 }
 
-interface SchedulePathParam {
-  sid: string;
-}
-
-type UpdateScheduleParam = SchedulePathParam & {};
-type DeleteScheduleParam = SchedulePathParam & {};
+type UpdateScheduleParam = SchedulePathParam;
+type DeleteScheduleParam = SchedulePathParam;
 
 interface ModifyCalendarScheduleReq {
   beforeStartAt: string;
@@ -64,12 +62,23 @@ interface UpdateScheduleReq {
   description: string;
   importance: ScheduleImportanceType;
   color: ColorType;
-  startDate: string; // ISO8601
-  endDate: string; // ISO8601
+  beforeStartAt: string; // ISO8601
+  beforeEndAt: string; // ISO8601
+  startAt: string; // ISO8601
+  endAt: string; // ISO8601
   isRepeat: boolean;
   repeatFrequency: RepeatFrequencyType | null;
   repeatInterval: number | null;
   repeatEndCount: number | null;
+}
+
+interface GetSummarySchedulesReq {
+  startDate: string; // ISO8601
+  endDate: string; // ISO8601
+}
+
+interface GetSummarySchedulesRes {
+  schedules: SummarySchedule[];
 }
 
 interface BasicCreateScheduleReq {
@@ -80,15 +89,6 @@ interface BasicCreateScheduleReq {
   color: ColorType;
   startDate: string; // ISO8601
   endDate: string; // ISO8601
-}
-
-interface GetSummarySchedulesReq {
-  startDate: string; // ISO8601
-  endDate: string; // ISO8601
-}
-
-interface GetSummarySchedulesRes {
-  schedules: SummarySchedule[];
 }
 
 type CreateRepeatScheduleReq = BasicCreateScheduleReq & {
