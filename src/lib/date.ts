@@ -41,7 +41,7 @@ export function getWeekDateRange(date: Date | string) {
 
 /** 입력 받은 특정 날짜가 자정이라면 YYYY-MM-DD 형식으로 반환 (ex: 2024-06-10T00:00 -> 2024-06-10) */
 export function changeDateIfMidnight(startDate: Date | string) {
-  const dateTime = dayjs(startDate).local();
+  const dateTime = dayjs(startDate);
 
   if (dateTime.hour() === 0 && dateTime.minute() === 0) {
     // "YYYY-MM-DD" 형식으로 변경

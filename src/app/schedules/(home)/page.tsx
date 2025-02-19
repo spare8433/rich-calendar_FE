@@ -36,7 +36,7 @@ export default function ScheduleCalendar() {
       {/* 캘린더 조작을 위한 header 부분 */}
       <CalendarHeader isSideOpen={isSideOpen} onClickSideButton={() => setIsSideOpen((prev) => !prev)} />
 
-      <div className="flex h-full flex-1">
+      <div className="relative flex h-full flex-1">
         <div className="absolute flex size-full">
           {/* calendar */}
           <ErrorBoundary
