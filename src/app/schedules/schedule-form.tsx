@@ -1,11 +1,9 @@
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { ChangeEvent, ReactNode, useState } from "react";
 import { SubmitErrorHandler, SubmitHandler, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
-import BasicLoader from "@/app/components/basic-loader";
 import DateTimePicker from "@/app/components/date-time-picker";
 import { Button } from "@/app/components/ui/button";
 import { Checkbox } from "@/app/components/ui/checkbox";
@@ -19,7 +17,7 @@ import { Separator } from "@/app/components/ui/separator";
 import { Textarea } from "@/app/components/ui/textarea";
 import { REPEAT_FREQUENCY_TYPE } from "@/constants";
 import { COLORS, IMPORTANCE, IMPORTANCE_TYPE, INVALID_TYPE_ERROR, REPEAT_FREQUENCY } from "@/constants";
-import apiRequest from "@/lib/api";
+import { useCalendarContext } from "@/contexts/calendar";
 import { modifyOnlyDate, modifyOnlyTime } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { getScheduleColorVariable } from "@/lib/utils";
@@ -42,7 +40,7 @@ export const scheduleSchema = z.object({
     .string()
     .max(200, { message: "설명은 최대 200자까지 작성가능합니다." })
     .min(2, { message: "설명은 최소 2자 이상 작성해야합니다." }),
-  tags: z.array(z.object({ id: z.number(), title: z.string() }, INVALID_TYPE_ERROR)),
+  tags: z.array(z.object({ id: z.string(), title: z.string() }, INVALID_TYPE_ERROR)),
   importance: z.enum(IMPORTANCE, INVALID_TYPE_ERROR),
   isRepeat: z.enum(["yes", "no"], INVALID_TYPE_ERROR),
   repeatInterval: z.coerce
@@ -229,19 +227,15 @@ const DescriptionField = () => {
 };
 
 const TagsField = () => {
-  const { data, isSuccess } = useQuery({
-    queryKey: ["scheduleTags"],
-    queryFn: () => apiRequest("getScheduleTags"),
-  });
-
+  const { entireTags } = useCalendarContext();
   const { watch, setValue } = useFormContext<FormValues>();
   const { tags } = watch();
 
   // 현재 체크된 tag id 목록 state 초기값은 form 의 초기 tag id 목록
-  const [checkedTagIds, setCheckedTagsIds] = useState<number[]>(tags.map(({ id }) => id));
+  const [checkedTagIds, setCheckedTagsIds] = useState<string[]>(tags.map(({ id }) => id));
 
-  const handleCheckedChange = (checked: CheckedState, tagId: number) => {
-    if (!data) return;
+  const handleCheckedChange = (checked: CheckedState, tagId: string) => {
+    // if (!data) return;
 
     const currentTagsSet = new Set(checkedTagIds);
     checked ? currentTagsSet.add(tagId) : currentTagsSet.delete(tagId);
@@ -250,11 +244,11 @@ const TagsField = () => {
     // 체크된 tag id 기반으로 form value 변경
     setValue(
       "tags",
-      data.tags.filter((tag) => currentTagsSet.has(tag.id)),
+      entireTags.filter((tag) => currentTagsSet.has(tag.id)),
     );
   };
 
-  const getCheckBoxChecked = (tagId: number) => new Set(checkedTagIds).has(tagId);
+  const getCheckBoxChecked = (tagId: string) => new Set(checkedTagIds).has(tagId);
 
   return (
     <div className="space-y-3">
@@ -271,22 +265,18 @@ const TagsField = () => {
           <PopoverContent className="w-80 space-y-3" side="right">
             <h2 className="text-sm font-medium">분류 수정</h2>
             <Separator />
-            {isSuccess ? (
-              <div className="space-y-3">
-                {data.tags.map((tag) => (
-                  <div key={tag.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`${tag.id}-${tag.title}`}
-                      defaultChecked={getCheckBoxChecked(tag.id)}
-                      onCheckedChange={(checked) => handleCheckedChange(checked, tag.id)}
-                    />
-                    <Label htmlFor={`${tag.id}-${tag.title}`}>{tag.title}</Label>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <BasicLoader />
-            )}
+            <div className="space-y-3">
+              {entireTags.map((tag) => (
+                <div key={tag.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`${tag.id}-${tag.title}`}
+                    defaultChecked={getCheckBoxChecked(tag.id)}
+                    onCheckedChange={(checked) => handleCheckedChange(checked, tag.id)}
+                  />
+                  <Label htmlFor={`${tag.id}-${tag.title}`}>{tag.title}</Label>
+                </div>
+              ))}
+            </div>
           </PopoverContent>
         </Popover>
       </div>

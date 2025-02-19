@@ -1,33 +1,26 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import { isEqual } from "lodash";
 import { ArrowLeft, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import BasicLoader from "@/app/components/basic-loader";
-import ErrorBoundary from "@/app/components/error-boundary";
 import { Button } from "@/app/components/ui/button";
 import { Form } from "@/app/components/ui/form";
 import { ScrollArea } from "@/app/components/ui/scroll-area";
 import { ChangeConfirm, DeleteConfirm } from "@/app/schedules/[sid]/confirms";
 import { FormValues, ScheduleForm, scheduleSchema } from "@/app/schedules/schedule-form";
-import apiRequest from "@/lib/api";
-
+import { useCalendarContext } from "@/contexts/calendar";
 export default function ScheduleDetail() {
   const { sid } = useParams<{ sid: string }>();
-
   const router = useRouter();
 
-  // 개인 일정 상세 정보 조회 api
-  const { data, isSuccess } = useQuery({
-    throwOnError: true,
-    queryKey: ["scheduleDetail", sid],
-    queryFn: () => apiRequest("getSchedule", undefined, sid),
-  });
+  const { entireSchedules } = useCalendarContext();
+
+  const currentSchedule = entireSchedules.find(({ id }) => id === sid);
 
   return (
     <div className="absolute left-0 top-0 z-10 flex size-full flex-col overflow-hidden bg-white">
@@ -41,15 +34,20 @@ export default function ScheduleDetail() {
 
       {/* 일정 상세 정보 Form content */}
       <ScrollArea className="overflow-y-auto px-6 py-4">
-        <ErrorBoundary>
-          {isSuccess ? <ScheduleDetailForm scheduleId={Number(sid)} data={data} /> : <BasicLoader />}
-        </ErrorBoundary>
+        {currentSchedule ? (
+          <ScheduleDetailForm scheduleId={sid} schedule={currentSchedule} />
+        ) : (
+          <div role="alert" className="flex size-full flex-col items-center justify-center">
+            <p className="mb-2 text-lg font-bold">정보를 불러오지 못했습니다.</p>
+            <Link href="/schedules">스케줄 페이지로</Link>
+          </div>
+        )}
       </ScrollArea>
     </div>
   );
 }
 
-const ScheduleDetailForm = ({ scheduleId, data }: { scheduleId: number; data: GetScheduleRes }) => {
+const ScheduleDetailForm = ({ scheduleId, schedule }: { scheduleId: string; schedule: EntireSchedule }) => {
   const searchParams = useSearchParams();
   const startAt = searchParams.get("startAt");
   const endAt = searchParams.get("endAt");
@@ -57,7 +55,8 @@ const ScheduleDetailForm = ({ scheduleId, data }: { scheduleId: number; data: Ge
   const [confirmOpen, setConfirmOpen] = useState(false); // 일정 수정 확인 모달
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false); // 일정 삭제 확인 모달
 
-  const { isRepeat, repeatFrequency, repeatInterval, repeatEndCount, description, startDate, endDate, ...rest } = data;
+  const { id, isRepeat, repeatFrequency, repeatInterval, repeatEndCount, description, startDate, endDate, ...rest } =
+    schedule;
 
   const defaultValues: FormValues = {
     description: description ?? "",
@@ -93,7 +92,6 @@ const ScheduleDetailForm = ({ scheduleId, data }: { scheduleId: number; data: Ge
       <ChangeConfirm
         open={confirmOpen}
         scheduleId={scheduleId}
-        defaultValues={defaultValues}
         onOpenChange={(open: boolean) => setConfirmOpen(open)}
       />
 

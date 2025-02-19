@@ -22,7 +22,7 @@ import { useCalendarContext } from "@/contexts/calendar";
 
 export interface ScheduleExtendedProps {
   isRepeat: boolean;
-  scheduleId: number;
+  scheduleId: string;
   color: ColorType;
   startAt: string;
   endAt: string;

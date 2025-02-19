@@ -7,7 +7,7 @@ type ScheduleImportanceType = "veryLow" | "low" | "medium" | "high" | "veryHigh"
 type RepeatFrequencyType = "daily" | "weekly" | "monthly" | "yearly";
 
 interface Tag {
-  id: number;
+  id: string;
   title: string;
 }
 
@@ -20,29 +20,13 @@ interface RepeatOptions {
 
 interface NoRepeatOptions {
   isRepeat: false;
+  repeatFrequency: null;
+  repeatInterval: null;
+  repeatEndCount: null;
 }
 
-// interface ScheduleChangeObject {
-//   id: number;
-//   initialIsRepeat: boolean;
-//   initialStartDate: string; // ISO8601
-//   initialEndDate: string; // ISO8601
-
-//   title?: string;
-//   description?: string;
-//   importance?: ScheduleImportanceType;
-//   color?: ColorType;
-//   tags?: tag[];
-//   startAt?: string; // ISO8601
-//   endAt?: string; // ISO8601
-//   isRepeat?: boolean;
-//   repeatFrequency?: RepeatFrequencyType;
-//   repeatInterval?: number;
-//   repeatCount?: number;
-// }
-
 interface ScheduleChangeObject {
-  id: number;
+  id: string;
   beforeStartAt: string; // ISO8601
   beforeEndAt: string; // ISO8601
   startAt: string; // ISO8601
@@ -50,22 +34,8 @@ interface ScheduleChangeObject {
   isRepeat: boolean;
 }
 
-// interface BasicCalendarSchedule {
-//   id: number;
-//   title: string;
-//   color: ColorType;
-//   startDate: string; // ISO8601
-//   endDate: string; // ISO8601
-// }
-
-// type RepeatCalendarSchedule = BasicCalendarSchedule & RepeatOptions;
-
-// type NoRepeatCalendarSchedule = BasicCalendarSchedule & NoRepeatOptions;
-
-// type CalendarSchedule = RepeatCalendarSchedule | NoRepeatCalendarSchedule;
-
 interface CalendarSchedule {
-  id: number;
+  id: string;
   title: string;
   color: ColorType;
   startAt: string; // ISO8601
@@ -74,10 +44,69 @@ interface CalendarSchedule {
 }
 
 interface SummarySchedule {
-  id: number;
+  id: string;
   startAt: string; // ISO8601 (YYYY-MM-DD)
   endAt: string; // ISO8601 (YYYY-MM-DD)
   title: string;
   color: ColorType;
   tagTitles: string[];
+}
+
+interface BasicEntireSchedule {
+  id: string;
+  title: string;
+  description: string;
+  importance: ScheduleImportanceType;
+  color: ColorType;
+  startDate: string; // ISO8601
+  endDate: string; // ISO8601
+  createdAt: string;
+  tags: Tag[];
+  repeatEndDate: string;
+}
+
+type RepeatEntireSchedule = BasicEntireSchedule & RepeatOptions;
+
+type NoRepeatEntireSchedule = BasicEntireSchedule & NoRepeatOptions;
+
+type EntireSchedule = RepeatEntireSchedule | NoRepeatEntireSchedule;
+
+interface BasicCreatedSchedule {
+  title: string;
+  description: string;
+  importance: ScheduleImportanceType;
+  color: ColorType;
+  startDate: string; // ISO8601
+  endDate: string; // ISO8601
+  tags: Tag[];
+}
+
+type RepeatCreatedSchedule = BasicCreatedSchedule & RepeatOptions;
+type NoRepeatCreatedSchedule = BasicCreatedSchedule & NoRepeatOptions;
+
+type CreatedScheduleArg = RepeatCreatedSchedule | NoRepeatCreatedSchedule;
+
+interface BasicUpdatedSchedule {
+  title: string;
+  description: string;
+  importance: ScheduleImportanceType;
+  color: ColorType;
+  beforeStartAt: string; // ISO8601
+  beforeEndAt: string; // ISO8601
+  startAt: string; // ISO8601
+  endAt: string; // ISO8601
+  tags: Tag[];
+}
+
+type RepeatUpdatedSchedule = BasicUpdatedSchedule & RepeatOptions;
+type NoRepeatUpdatedSchedule = BasicUpdatedSchedule & NoRepeatOptions;
+
+type UpdatedScheduleArg = RepeatUpdatedSchedule | NoRepeatUpdatedSchedule;
+
+interface ModifiedScheduleArg {
+  beforeStartAt: string; // ISO8601
+  beforeEndAt: string; // ISO8601
+  startAt: string; // ISO8601
+  endAt: string; // ISO8601
+  isRepeat: boolean;
 }

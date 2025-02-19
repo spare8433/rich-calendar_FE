@@ -1,30 +1,18 @@
 "use client";
 
 import FullCalendar from "@fullcalendar/react";
-import { useQuery } from "@tanstack/react-query";
-import { DefaultError, useMutation } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { FileX2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import BasicLoader from "@/app/components/basic-loader";
-import ErrorBoundary from "@/app/components/error-boundary";
 import ScheduleConfirmModal from "@/app/components/schedule-confirm-modal";
-import { Button } from "@/app/components/ui/button";
 import { ScrollArea } from "@/app/components/ui/scroll-area";
 import CalendarHeader from "@/app/schedules/calendar-header";
 import useCalendar, { ScheduleExtendedProps, ScheduleInput } from "@/app/schedules/useCalendar";
 import { useCalendarContext } from "@/contexts/calendar";
 import { useToast } from "@/hooks/use-toast";
-import apiRequest from "@/lib/api";
 import { changeDateIfMidnight } from "@/lib/date";
-import { getScheduleColorVariable, handleMutationError } from "@/lib/utils";
-
-interface ModifyCalendarScheduleVariables {
-  req: ModifyCalendarScheduleReq;
-  pathParam: string;
-}
+import { getScheduleColorVariable } from "@/lib/utils";
 
 export default function ScheduleCalendar() {
   const [isSideOpen, setIsSideOpen] = useState(false);
@@ -36,28 +24,15 @@ export default function ScheduleCalendar() {
       {/* 캘린더 조작을 위한 header 부분 */}
       <CalendarHeader isSideOpen={isSideOpen} onClickSideButton={() => setIsSideOpen((prev) => !prev)} />
 
-      <div className="flex h-full flex-1">
+      <div className="relative flex h-full flex-1">
         <div className="absolute flex size-full">
           {/* calendar */}
-          <ErrorBoundary
-            FallbackComponent={({ resetErrorBoundary }) => (
-              <div className="bg-muted flex size-full flex-col items-center justify-center space-y-4 text-xl">
-                <FileX2 size={128} className="text-muted-foreground" />
-                <p className="font-bold">정보를 불러오지 못했습니다.</p>
-                <Button type="button" size="lg" className="text-lg" onClick={() => resetErrorBoundary()}>
-                  다시시도
-                </Button>
-              </div>
-            )}
-          >
-            <CalendarContent />
-          </ErrorBoundary>
+          <CalendarContent />
+
           {isSideOpen && (
             // 사이드 메뉴
             <aside className="flex h-full w-72 flex-col border-l p-4">
-              <ErrorBoundary>
-                <CalendarSideMenu />
-              </ErrorBoundary>
+              <CalendarSideMenu />
             </aside>
           )}
         </div>
@@ -67,38 +42,37 @@ export default function ScheduleCalendar() {
 }
 
 const CalendarContent = () => {
-  const { checkedTagIds, startDate, endDate, calendarRef } = useCalendarContext();
+  const { checkedTagIds, startDate, endDate, calendarRef, getCalendarSchedules, modifySchedule } = useCalendarContext();
   const { confirmOpen, calendarOption, scheduleChange, onConfirmOpenChange } = useCalendar(calendarRef);
   const { toast } = useToast();
 
-  const { data, isSuccess, refetch } = useQuery({
-    throwOnError: true,
-    queryKey: ["calendarSchedules", checkedTagIds, startDate, endDate],
-    queryFn: () =>
-      apiRequest("getCalendarSchedules", { startDate, endDate, ...(checkedTagIds && { tagIds: checkedTagIds }) }),
-  });
+  const calendarSchedules = getCalendarSchedules();
+  // const { data, isSuccess, refetch } = useQuery({
+  //   throwOnError: true,
+  //   queryKey: ["calendarSchedules", checkedTagIds, startDate, endDate],
+  //   queryFn: () =>
+  //     apiRequest("getCalendarSchedules", { startDate, endDate, ...(checkedTagIds && { tagIds: checkedTagIds }) }),
+  // });
 
   // 일정 수정 mutate
-  const { mutate, isPending: isConfirmPending } = useMutation<null, DefaultError, ModifyCalendarScheduleVariables>({
-    mutationFn: ({ req, pathParam }) => apiRequest("modifyCalendarSchedule", req, pathParam),
-    onSuccess: () => {
-      onConfirmOpenChange(false);
-      toast({ title: "일정 수정이 정상적으로 처리됐습니다.", variant: "success" });
-      refetch();
-    },
-    onError: (error) =>
-      handleMutationError(error, {
-        default: () =>
-          toast({
-            title: "일정 수정이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
-            variant: "destructive",
-          }),
-      }),
-  });
+  // const { mutate, isPending: isConfirmPending } = useMutation<null, DefaultError, ModifyCalendarScheduleVariables>({
+  //   mutationFn: ({ req, pathParam }) => apiRequest("modifyCalendarSchedule", req, pathParam),
+  //   onSuccess: () => {
+  //     onConfirmOpenChange(false);
+  //     toast({ title: "일정 수정이 정상적으로 처리됐습니다.", variant: "success" });
+  //     refetch();
+  //   },
+  //   onError: (error) =>
+  //     handleMutationError(error, {
+  //       default: () =>
+  //         toast({
+  //           title: "일정 수정이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
+  //           variant: "destructive",
+  //         }),
+  //     }),
+  // });
 
-  if (!isSuccess) return <BasicLoader />;
-
-  const events: ScheduleInput[] = data.schedules.map((sch) => {
+  const events: ScheduleInput[] = calendarSchedules.map((sch) => {
     const { id, title, startAt, endAt, color, isRepeat } = sch;
     return {
       id: `${id}-${startAt}`,
@@ -126,13 +100,14 @@ const CalendarContent = () => {
       {scheduleChange && (
         <ScheduleConfirmModal
           open={confirmOpen}
-          isLoading={isConfirmPending}
           title="일정을 수정하시겠습니까?"
           description="최종확인 후 일정이 수정됩니다."
           onOpenChange={onConfirmOpenChange}
           onAction={() => {
             const { id, ...rest } = scheduleChange;
-            mutate({ req: rest, pathParam: id.toString() });
+            modifySchedule(id, rest);
+            toast({ title: "일정 수정이 정상적으로 처리됐습니다.", variant: "success" });
+            return onConfirmOpenChange(false);
           }}
         />
       )}
@@ -141,20 +116,21 @@ const CalendarContent = () => {
 };
 
 const CalendarSideMenu = () => {
-  const { checkedTagIds, currentDate, startDate, endDate } = useCalendarContext();
+  const { checkedTagIds, currentDate, startDate, endDate, getSummarySchedules } = useCalendarContext();
 
-  const { data, isSuccess } = useQuery({
-    throwOnError: true,
-    queryKey: ["summarySchedules", checkedTagIds, currentDate],
-    queryFn: () =>
-      apiRequest("getSummarySchedules", { startDate, endDate, ...(checkedTagIds && { tag_ids: checkedTagIds }) }),
-  });
+  const summarySchedules = getSummarySchedules();
+  // const { data, isSuccess } = useQuery({
+  //   throwOnError: true,
+  //   queryKey: ["summarySchedules", checkedTagIds, currentDate],
+  //   queryFn: () =>
+  //     apiRequest("getSummarySchedules", { startDate, endDate, ...(checkedTagIds && { tag_ids: checkedTagIds }) }),
+  // });
 
-  if (!isSuccess) return <BasicLoader />;
+  // if (!isSuccess) return <BasicLoader />;
 
   const groupedScheduleMap = new Map<string, SummarySchedule[]>();
 
-  data.schedules.forEach((schedule) => {
+  summarySchedules.forEach((schedule) => {
     const dateKey = dayjs(schedule.startAt).format("YYYY-MM-DD");
     if (!groupedScheduleMap.has(dateKey)) {
       groupedScheduleMap.set(dateKey, []);
