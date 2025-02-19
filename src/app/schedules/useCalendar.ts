@@ -24,6 +24,8 @@ export interface ScheduleExtendedProps {
   isRepeat: boolean;
   scheduleId: number;
   color: ColorType;
+  startAt: string;
+  endAt: string;
 }
 
 export interface ScheduleInput extends EventInput {
@@ -68,7 +70,8 @@ export default function useCalendar(calendarRef: RefObject<FullCalendar | null>)
 
   const onEventClick = (arg: EventClickArg) => {
     const { extendedProps } = arg.event as ScheduleEvent;
-    router.push(`/schedules/${extendedProps.scheduleId}`);
+    const { scheduleId, startAt, endAt } = extendedProps;
+    router.push(`/schedules/${scheduleId}?startAt=${startAt}&endAt=${endAt}`);
   };
 
   const onDayCellDidMount = (info: DayCellMountArg) => {

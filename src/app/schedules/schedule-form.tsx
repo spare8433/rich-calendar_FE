@@ -146,15 +146,15 @@ const DateRangeField = () => {
 
   // 날짜 변경 이벤트 핸들러
   const handleChangeDate = (type: "startDate" | "endDate", date: Date) => {
-    const updatedDateTime = modifyOnlyDate(getValues()[type], date).toString();
-    setValue(type, updatedDateTime);
+    const updatedDateTime = modifyOnlyDate(getValues()[type], date).toISOString();
+    setValue(type, updatedDateTime, { shouldDirty: true });
     trigger(["startDate", "endDate"]); // 유효성 검사
   };
 
   // 시간 변경 이벤트 핸들러
   const handleChangeTime = (type: "startDate" | "endDate", e: ChangeEvent<HTMLInputElement>) => {
-    const updatedDateTime = modifyOnlyTime(getValues()[type], e.currentTarget.value).toString();
-    setValue(type, updatedDateTime);
+    const updatedDateTime = modifyOnlyTime(getValues()[type], e.currentTarget.value).toISOString();
+    setValue(type, updatedDateTime, { shouldDirty: true });
     trigger(["startDate", "endDate"]); // 유효성 검사
   };
 
@@ -165,6 +165,7 @@ const DateRangeField = () => {
     else if (endDateError) return endDateError.message;
     else return undefined;
   };
+
   return (
     <div className="space-y-2">
       <span className="text-sm font-medium">시간</span>

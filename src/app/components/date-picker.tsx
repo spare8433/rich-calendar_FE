@@ -20,7 +20,7 @@ const DatePickerContent = React.forwardRef<HTMLDivElement, DayPickerContentProps
   const { value = new Date(), ...rest } = props;
   return (
     <PopoverContent className="w-auto p-0" align="start" ref={ref}>
-      <Calendar mode="single" selected={value} {...rest} />
+      <Calendar mode="single" selected={value} defaultMonth={value} {...rest} />
     </PopoverContent>
   );
 });

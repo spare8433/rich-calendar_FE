@@ -1,11 +1,4 @@
 import dayjs, { ConfigType } from "dayjs";
-import utc from "dayjs/plugin/utc";
-
-dayjs.extend(utc);
-
-export function convertUstToKST(date: ConfigType) {
-  return dayjs(date).local();
-}
 
 /**  기본 날짜 형식으로 변환하여 반환 (YYYY-MM-DDTHH:mm:SSS) */
 export function getDefaultFormatDate(date: ConfigType) {
