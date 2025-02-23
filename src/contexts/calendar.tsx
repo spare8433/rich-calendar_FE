@@ -7,6 +7,7 @@ import { RefObject, useState } from "react";
 import { v4 as uuidv4 } from "uuid"; // npm install uuid
 
 import { DUMMY_SCHEDULES, DUMMY_TAGS, FREQUENCY, SCHEDULE_VIEW_TYPE } from "@/constants";
+import { useToast } from "@/hooks/use-toast";
 import { CustomError } from "@/lib/customError";
 import { getMonthDateRange } from "@/lib/date";
 import { calculateDateRangeDiff, calculateRepeatEndDate } from "@/lib/utils";
@@ -29,6 +30,8 @@ interface CalendarControls {
   createSchedule: (schedule: CreatedScheduleArg) => void;
   updateSchedule: (sid: string, schedule: UpdatedScheduleArg) => void;
   modifySchedule: (sid: string, schedule: ModifiedScheduleArg) => void;
+  addTag: (tagTitle: string) => void;
+  updateTag: (tagTitle: string) => void;
   deleteSchedule: (sid: string) => void;
   updateCheckedTagIds: (ids: string[]) => void;
   updateDateObj: (startDate: InputDateType, endDate: InputDateType) => void;
@@ -71,6 +74,7 @@ export const useCalendarContext = () => {
   @param calendarRef: FullCalendar 컴포넌트의 Ref
  */
 export function useCalendarControls(calendarRef: RefObject<FullCalendar | null>): CalendarControls {
+  const { toast } = useToast();
   const [viewType, setViewType] = useState<CalendarViewType>("month"); // 현재 캘린더 view 형식
   // 필터에서 체크된 태그 id 목록, 초기값 null 은 초기 모든 태그들이 선택된 상태를 의미하며 이후 체크 상태가 변경되는 경우 체크된 id 배열로 상태를 유지
   const [checkedTagIds, setCheckedTagIds] = useState<string[] | null>(null);
@@ -263,6 +267,33 @@ export function useCalendarControls(calendarRef: RefObject<FullCalendar | null>)
     );
   };
 
+  const addTag = (tagTitle: string) => {
+    const tagIndex = entireTags.findIndex(({ title }) => title === tagTitle);
+
+    if (tagIndex < 0) return toast({ title: "중복된 태그명은 등록할 수 없습니다.", variant: "warning" });
+
+    setEntireTags((prev) =>
+      produce(prev, (draft) => {
+        draft.push({
+          id: uuidv4(),
+          title: tagTitle,
+        });
+      }),
+    );
+  };
+
+  const updateTag = (tagTitle: string) => {
+    const tagIndex = entireTags.findIndex(({ title }) => title === tagTitle);
+
+    if (tagIndex < 0) return toast({ title: "중복된 태그명은 등록할 수 없습니다.", variant: "warning" });
+
+    setEntireTags((prev) =>
+      produce(prev, (draft) => {
+        draft[tagIndex].title = tagTitle;
+      }),
+    );
+  };
+
   const updateCalendarTitle = (dateObj: CalendarDateState & { currentDate: string }, viewType: CalendarViewType) => {
     const { currentDate, startDate, endDate } = dateObj;
     const currentKstDate = dayjs(currentDate);
@@ -342,6 +373,8 @@ export function useCalendarControls(calendarRef: RefObject<FullCalendar | null>)
     updateSchedule,
     modifySchedule,
     deleteSchedule,
+    addTag,
+    updateTag,
     updateDateObj,
     updateCheckedTagIds,
     updateCurrentDate,

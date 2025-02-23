@@ -1,5 +1,6 @@
 import { CheckedState } from "@radix-ui/react-checkbox";
 import dayjs from "dayjs";
+import { ChevronLeft, CirclePlus, Pencil } from "lucide-react";
 import { ChangeEvent, ReactNode, useState } from "react";
 import { SubmitErrorHandler, SubmitHandler, useFormContext } from "react-hook-form";
 import { z } from "zod";
@@ -227,9 +228,11 @@ const DescriptionField = () => {
 };
 
 const TagsField = () => {
-  const { entireTags } = useCalendarContext();
+  const { entireTags, addTag, updateTag } = useCalendarContext();
   const { watch, setValue } = useFormContext<FormValues>();
   const { tags } = watch();
+  const [mode, setMode] = useState<"add" | "list" | "modify">("list");
+  const [tagTitle, setTagTitle] = useState("");
 
   // 현재 체크된 tag id 목록 state 초기값은 form 의 초기 tag id 목록
   const [checkedTagIds, setCheckedTagsIds] = useState<string[]>(tags.map(({ id }) => id));
@@ -254,27 +257,120 @@ const TagsField = () => {
         <span className="text-sm font-medium">분류</span>
 
         {/* tag 수정 popover */}
-        <Popover>
+        <Popover onOpenChange={(open) => open && setMode("list")}>
           <PopoverTrigger asChild>
             <Button type="button" variant="default" size="sm">
               태그 변경
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-80 space-y-3" side="right">
-            <h2 className="text-sm font-medium">분류 수정</h2>
-            <Separator />
-            <div className="space-y-3">
-              {entireTags.map((tag) => (
-                <div key={tag.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`${tag.id}-${tag.title}`}
-                    defaultChecked={getCheckBoxChecked(tag.id)}
-                    onCheckedChange={(checked) => handleCheckedChange(checked, tag.id)}
-                  />
-                  <Label htmlFor={`${tag.id}-${tag.title}`}>{tag.title}</Label>
+            {mode === "list" && (
+              <>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-medium">분류 수정</h2>
+                  <Button
+                    variant={null}
+                    size={null}
+                    onClick={() => {
+                      setTagTitle("");
+                      setMode("add");
+                    }}
+                  >
+                    <CirclePlus />
+                  </Button>
                 </div>
-              ))}
-            </div>
+
+                <Separator />
+                <div className="space-y-3">
+                  {entireTags.map((tag) => (
+                    <div key={tag.id} className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2 py-0.5">
+                        <Checkbox
+                          id={`${tag.id}-${tag.title}`}
+                          defaultChecked={getCheckBoxChecked(tag.id)}
+                          onCheckedChange={(checked) => handleCheckedChange(checked, tag.id)}
+                        />
+                        <Label className="cursor-pointer" htmlFor={`${tag.id}-${tag.title}`}>
+                          {tag.title}
+                        </Label>
+                      </div>
+                      <Button
+                        variant="image-icon-none"
+                        size={null}
+                        onClick={() => {
+                          setMode("modify");
+                          setTagTitle(tag.title);
+                        }}
+                      >
+                        <Pencil />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {mode === "add" && (
+              <>
+                <div className="flex items-center gap-2">
+                  <Button type="button" variant={null} size={null} onClick={() => setMode("list")}>
+                    <ChevronLeft />
+                  </Button>
+
+                  <h2 className="text-sm font-medium">태그 등록</h2>
+                </div>
+
+                <Separator />
+                <div className="flex items-center gap-x-2">
+                  <Input
+                    placeholder="등록할 태그명"
+                    value={tagTitle}
+                    onChange={(e) => setTagTitle(e.currentTarget.value)}
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => {
+                      addTag(tagTitle);
+                      setTagTitle("");
+                    }}
+                  >
+                    등록
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {mode === "modify" && (
+              <>
+                <div className="flex items-center gap-2">
+                  <Button type="button" variant={null} size={null} onClick={() => setMode("list")}>
+                    <ChevronLeft />
+                  </Button>
+
+                  <h2 className="text-sm font-medium">태그 수정</h2>
+                </div>
+
+                <Separator />
+                <div className="flex items-center gap-x-2">
+                  <Input
+                    placeholder="수정할 태그명"
+                    value={tagTitle}
+                    onChange={(e) => setTagTitle(e.currentTarget.value)}
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => {
+                      updateTag(tagTitle);
+                      setTagTitle("");
+                    }}
+                  >
+                    등록
+                  </Button>
+                </div>
+              </>
+            )}
           </PopoverContent>
         </Popover>
       </div>
