@@ -235,8 +235,6 @@ const TagsField = () => {
   const [checkedTagIds, setCheckedTagsIds] = useState<string[]>(tags.map(({ id }) => id));
 
   const handleCheckedChange = (checked: CheckedState, tagId: string) => {
-    // if (!data) return;
-
     const currentTagsSet = new Set(checkedTagIds);
     checked ? currentTagsSet.add(tagId) : currentTagsSet.delete(tagId);
     setCheckedTagsIds(Array.from(currentTagsSet));
@@ -363,7 +361,6 @@ const RepeatFieldGroup = () => {
                 <RadioGroup
                   defaultValue={field.value}
                   className="flex items-center gap-x-4"
-                  // onValueChange={field.onChange}
                   onValueChange={(value) => {
                     field.onChange(value);
                     return trigger(["isRepeat", "repeatEndCount", "repeatFrequency", "repeatInterval"]);

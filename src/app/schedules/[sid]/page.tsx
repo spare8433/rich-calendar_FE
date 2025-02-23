@@ -14,6 +14,7 @@ import { ScrollArea } from "@/app/components/ui/scroll-area";
 import { ChangeConfirm, DeleteConfirm } from "@/app/schedules/[sid]/confirms";
 import { FormValues, ScheduleForm, scheduleSchema } from "@/app/schedules/schedule-form";
 import { useCalendarContext } from "@/contexts/calendar";
+
 export default function ScheduleDetail() {
   const { sid } = useParams<{ sid: string }>();
   const router = useRouter();

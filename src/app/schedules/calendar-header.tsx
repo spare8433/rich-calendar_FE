@@ -10,18 +10,9 @@ import { useCalendarContext } from "@/contexts/calendar";
 import { cn } from "@/lib/utils";
 
 const VIEW_BUTTONS_DATA = [
-  {
-    viewText: "월",
-    viewType: "month",
-  },
-  {
-    viewText: "주",
-    viewType: "week",
-  },
-  {
-    viewText: "일",
-    viewType: "day",
-  },
+  { viewText: "월", viewType: "month" },
+  { viewText: "주", viewType: "week" },
+  { viewText: "일", viewType: "day" },
 ] as const;
 
 interface Props {
@@ -93,16 +84,6 @@ const FilterContents = () => {
   const { entireTags, checkedTagIds, startDate, endDate, updateCheckedTagIds, updateTagChecked, getTagChecked } =
     useCalendarContext();
 
-  // 필터링용 태그 목록 요청 로직
-  // const { data: scheduleTagsData, isSuccess } = useQuery({
-  //   throwOnError: true,
-  //   queryKey: ["scheduleTags", checkedTagIds, startDate, endDate],
-  //   queryFn: () => apiRequest("getScheduleTags"),
-  // });
-
-  // if (!isSuccess) return <BasicLoader />;
-
-  // const { tags } = scheduleTagsData;
   const scheduleTagIds = entireTags.map(({ id }) => id);
 
   // 초기 태그 데이터 로드시 전체 태그 id 배열을 로컬변수 initialIds 에 저장, 이후 태그를 변경하는 시점부터 정상적으로 state 사용

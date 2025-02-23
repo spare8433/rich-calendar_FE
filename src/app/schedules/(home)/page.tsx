@@ -42,35 +42,11 @@ export default function ScheduleCalendar() {
 }
 
 const CalendarContent = () => {
-  const { checkedTagIds, startDate, endDate, calendarRef, getCalendarSchedules, modifySchedule } = useCalendarContext();
+  const { calendarRef, getCalendarSchedules, modifySchedule } = useCalendarContext();
   const { confirmOpen, calendarOption, scheduleChange, onConfirmOpenChange } = useCalendar(calendarRef);
   const { toast } = useToast();
 
   const calendarSchedules = getCalendarSchedules();
-  // const { data, isSuccess, refetch } = useQuery({
-  //   throwOnError: true,
-  //   queryKey: ["calendarSchedules", checkedTagIds, startDate, endDate],
-  //   queryFn: () =>
-  //     apiRequest("getCalendarSchedules", { startDate, endDate, ...(checkedTagIds && { tagIds: checkedTagIds }) }),
-  // });
-
-  // 일정 수정 mutate
-  // const { mutate, isPending: isConfirmPending } = useMutation<null, DefaultError, ModifyCalendarScheduleVariables>({
-  //   mutationFn: ({ req, pathParam }) => apiRequest("modifyCalendarSchedule", req, pathParam),
-  //   onSuccess: () => {
-  //     onConfirmOpenChange(false);
-  //     toast({ title: "일정 수정이 정상적으로 처리됐습니다.", variant: "success" });
-  //     refetch();
-  //   },
-  //   onError: (error) =>
-  //     handleMutationError(error, {
-  //       default: () =>
-  //         toast({
-  //           title: "일정 수정이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
-  //           variant: "destructive",
-  //         }),
-  //     }),
-  // });
 
   const events: ScheduleInput[] = calendarSchedules.map((sch) => {
     const { id, title, startAt, endAt, color, isRepeat } = sch;
@@ -116,18 +92,9 @@ const CalendarContent = () => {
 };
 
 const CalendarSideMenu = () => {
-  const { checkedTagIds, currentDate, startDate, endDate, getSummarySchedules } = useCalendarContext();
+  const { getSummarySchedules } = useCalendarContext();
 
   const summarySchedules = getSummarySchedules();
-  // const { data, isSuccess } = useQuery({
-  //   throwOnError: true,
-  //   queryKey: ["summarySchedules", checkedTagIds, currentDate],
-  //   queryFn: () =>
-  //     apiRequest("getSummarySchedules", { startDate, endDate, ...(checkedTagIds && { tag_ids: checkedTagIds }) }),
-  // });
-
-  // if (!isSuccess) return <BasicLoader />;
-
   const groupedScheduleMap = new Map<string, SummarySchedule[]>();
 
   summarySchedules.forEach((schedule) => {

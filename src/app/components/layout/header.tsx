@@ -58,7 +58,12 @@ const UserPopover = () => {
 
         <Separator />
 
-        <Button type="button" className="w-full justify-start space-x-4" variant="ghost">
+        <Button
+          type="button"
+          className="w-full justify-start space-x-4"
+          variant="ghost"
+          onClick={() => toast({ title: "데모 버전에서는 사용할 수 없는 기능입니다.", variant: "success" })}
+        >
           <LogOut size="14" />
           <span>로그아웃</span>
         </Button>

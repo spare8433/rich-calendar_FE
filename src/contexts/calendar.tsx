@@ -99,7 +99,7 @@ export function useCalendarControls(calendarRef: RefObject<FullCalendar | null>)
         (calendarStartDateDayjs.isBefore(endDate) || calendarStartDateDayjs.isBefore(repeatEndDate)) &&
         tagIds.find((id) => {
           if (checkedTagIds === null) return true;
-          else checkedTagIds.includes(id);
+          else return checkedTagIds.includes(id);
         })
       )
         return schedule;
