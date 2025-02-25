@@ -9,7 +9,7 @@ import { REPEAT_FREQUENCY } from "@/constants";
 import { useCalendarContext } from "@/contexts/calendar";
 import { useToast } from "@/hooks/use-toast";
 
-import { FormValues } from "../schedule-form";
+import { ScheduleFormValues } from "../schedule-form/form-schema";
 
 interface BasicConfirmProps {
   open: boolean;
@@ -25,7 +25,7 @@ const ChangeConfirm = ({ open, scheduleId, onOpenChange }: BasicConfirmProps) =>
   const router = useRouter();
   const { toast } = useToast();
 
-  const { watch } = useFormContext<FormValues>();
+  const { watch } = useFormContext<ScheduleFormValues>();
   const formValues = watch();
 
   const onModify = () => {
@@ -73,7 +73,7 @@ const ChangeConfirm = ({ open, scheduleId, onOpenChange }: BasicConfirmProps) =>
 };
 
 const DeleteConfirm = ({ open, scheduleId, onOpenChange }: BasicConfirmProps) => {
-  const { watch } = useFormContext<FormValues>();
+  const { watch } = useFormContext<ScheduleFormValues>();
   const formValues = watch();
   const router = useRouter();
   const { toast } = useToast();

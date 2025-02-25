@@ -31,7 +31,8 @@ interface CalendarControls {
   updateSchedule: (sid: string, schedule: UpdatedScheduleArg) => void;
   modifySchedule: (sid: string, schedule: ModifiedScheduleArg) => void;
   addTag: (tagTitle: string) => void;
-  updateTag: (tagTitle: string) => void;
+  updateTag: (tagId: string, tagTitle: string) => void;
+  deleteTag: (tagId: string) => void;
   deleteSchedule: (sid: string) => void;
   updateCheckedTagIds: (ids: string[]) => void;
   updateDateObj: (startDate: InputDateType, endDate: InputDateType) => void;
@@ -259,10 +260,12 @@ export function useCalendarControls(calendarRef: RefObject<FullCalendar | null>)
   };
 
   const deleteSchedule = (sid: string) => {
+    const scheduleIndex = entireSchedules.findIndex(({ id }) => id === sid);
+    if (scheduleIndex < 0) return toast({ title: "존재하지 않는 태그입니다.", variant: "warning" });
+
     setEntireSchedules((prev) =>
       produce(prev, (draft) => {
-        const findId = draft.findIndex(({ id }) => id === sid);
-        draft.splice(findId, 1);
+        draft.splice(scheduleIndex, 1);
       }),
     );
   };
@@ -270,7 +273,7 @@ export function useCalendarControls(calendarRef: RefObject<FullCalendar | null>)
   const addTag = (tagTitle: string) => {
     const tagIndex = entireTags.findIndex(({ title }) => title === tagTitle);
 
-    if (tagIndex < 0) return toast({ title: "중복된 태그명은 등록할 수 없습니다.", variant: "warning" });
+    if (tagIndex >= 0) return toast({ title: "중복된 태그명은 등록할 수 없습니다.", variant: "warning" });
 
     setEntireTags((prev) =>
       produce(prev, (draft) => {
@@ -282,14 +285,26 @@ export function useCalendarControls(calendarRef: RefObject<FullCalendar | null>)
     );
   };
 
-  const updateTag = (tagTitle: string) => {
-    const tagIndex = entireTags.findIndex(({ title }) => title === tagTitle);
+  const updateTag = (tagId: string, tagTitle: string) => {
+    const tagIndex = entireTags.findIndex(({ id }) => id === tagId);
 
-    if (tagIndex < 0) return toast({ title: "중복된 태그명은 등록할 수 없습니다.", variant: "warning" });
+    if (tagIndex < 0) return toast({ title: "존재하지 않는 태그입니다.", variant: "warning" });
 
     setEntireTags((prev) =>
       produce(prev, (draft) => {
         draft[tagIndex].title = tagTitle;
+      }),
+    );
+  };
+
+  const deleteTag = (tagId: string) => {
+    const tagIndex = entireTags.findIndex(({ id }) => id === tagId);
+
+    if (tagIndex < 0) return toast({ title: "존재하지 않는 태그입니다.", variant: "warning" });
+
+    setEntireTags((prev) =>
+      produce(prev, (draft) => {
+        draft.splice(tagIndex, 1);
       }),
     );
   };
@@ -375,6 +390,7 @@ export function useCalendarControls(calendarRef: RefObject<FullCalendar | null>)
     deleteSchedule,
     addTag,
     updateTag,
+    deleteTag,
     updateDateObj,
     updateCheckedTagIds,
     updateCurrentDate,
