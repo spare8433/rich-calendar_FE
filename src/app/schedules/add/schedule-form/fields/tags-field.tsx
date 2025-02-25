@@ -162,7 +162,7 @@ export default function TagsField() {
           <PopoverContent
             className="space-y-3"
             side="right"
-            onInteractOutside={(e) => isSubMenuOpen && e.preventDefault()}
+            onInteractOutside={(e) => isSubMenuOpen && mode === "list" && e.preventDefault()}
           >
             {/* popover tag 목록 content box */}
             {mode === "list" &&
@@ -244,7 +244,15 @@ export default function TagsField() {
               <>
                 <div className="flex items-center gap-2">
                   {/* 이전 버튼(list 화면으로) */}
-                  <Button type="button" variant={null} size={null} onClick={() => setMode("list")}>
+                  <Button
+                    type="button"
+                    variant={null}
+                    size={null}
+                    onClick={() => {
+                      setMode("list");
+                      setIsSubMenuOpen(false);
+                    }}
+                  >
                     <ChevronLeft />
                   </Button>
                   <h2 className="text-sm font-medium">태그 등록</h2>
@@ -276,7 +284,15 @@ export default function TagsField() {
               <>
                 <div className="flex items-center gap-2">
                   {/* 이전 버튼(list 화면으로) */}
-                  <Button type="button" variant={null} size={null} onClick={() => setMode("list")}>
+                  <Button
+                    type="button"
+                    variant={null}
+                    size={null}
+                    onClick={() => {
+                      setMode("list");
+                      setIsSubMenuOpen(false);
+                    }}
+                  >
                     <ChevronLeft />
                   </Button>
                   <h2 className="text-sm font-medium">태그 수정</h2>
@@ -291,7 +307,7 @@ export default function TagsField() {
                     value={tagTitle}
                     onChange={(e) => setTagTitle(e.currentTarget.value)}
                   />
-                  <LoadingButton type="button" size="sm" isLoading={isUpdateLoading} onClick={() => handleUpdateTag()}>
+                  <LoadingButton type="button" size="sm" isLoading={isUpdateLoading} onClick={handleUpdateTag}>
                     수정
                   </LoadingButton>
                 </div>
