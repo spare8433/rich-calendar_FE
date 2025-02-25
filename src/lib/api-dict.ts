@@ -18,7 +18,7 @@ export interface ApiEndpoint {
   deleteScheduleTag: HttpReqRes<never, never>;
   getSchedule: HttpReqRes<never, GetScheduleRes>;
   getSummarySchedules: HttpReqRes<GetSummarySchedulesReq, GetSummarySchedulesRes>;
-  modifyCalendarSchedule: HttpReqRes<UpdateScheduleTagReq, never>;
+  modifyCalendarSchedule: HttpReqRes<ModifyCalendarScheduleReq, never>;
   updateSchedule: HttpReqRes<UpdateScheduleReq, never>;
   deleteSchedule: HttpReqRes<never, never>;
   createSchedule: HttpReqRes<CreateScheduleReq, never>;
