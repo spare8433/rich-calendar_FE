@@ -1,13 +1,13 @@
 import { ReactNode } from "react";
 import { SubmitErrorHandler, SubmitHandler, useFormContext } from "react-hook-form";
 
-import ColorTitleField from "./add/schedule-form/fields/color-title-field";
-import DateRangeField from "./add/schedule-form/fields/date-range-field";
-import DescriptionField from "./add/schedule-form/fields/description-field";
-import ImportanceField from "./add/schedule-form/fields/importance-field";
-import RepeatFieldGroup from "./add/schedule-form/fields/repeat-field-group";
-import TagsField from "./add/schedule-form/fields/tags-field";
-import { ScheduleFormValues } from "./add/schedule-form/form-schema";
+import ColorTitleField from "./fields/color-title-field";
+import DateRangeField from "./fields/date-range-field";
+import DescriptionField from "./fields/description-field";
+import ImportanceField from "./fields/importance-field";
+import RepeatFieldGroup from "./fields/repeat-field-group";
+import TagsField from "./fields/tags-field";
+import { ScheduleFormValues } from "./form-schema";
 
 interface ScheduleFormProps {
   children: ReactNode;

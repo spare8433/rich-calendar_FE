@@ -14,8 +14,10 @@ import { Button } from "@/app/components/ui/button";
 import { Form } from "@/app/components/ui/form";
 import { ScrollArea } from "@/app/components/ui/scroll-area";
 import { ChangeConfirm, DeleteConfirm } from "@/app/schedules/[sid]/confirms";
-import { FormValues, ScheduleForm, scheduleSchema } from "@/app/schedules/schedule-form";
+import { ScheduleForm } from "@/app/schedules/schedule-form";
 import apiRequest from "@/lib/api";
+
+import { ScheduleFormValues, scheduleSchema } from "../add/schedule-form/form-schema";
 
 export default function ScheduleDetail() {
   const { sid } = useParams<{ sid: string }>();
@@ -59,7 +61,7 @@ const ScheduleDetailForm = ({ scheduleId, data }: { scheduleId: number; data: Ge
 
   const { isRepeat, repeatFrequency, repeatInterval, repeatEndCount, description, startDate, endDate, ...rest } = data;
 
-  const defaultValues: FormValues = {
+  const defaultValues: ScheduleFormValues = {
     description: description ?? "",
     ...rest,
     ...(startAt && endAt ? { startDate: startAt, endDate: endAt } : { startDate, endDate }),
@@ -68,7 +70,7 @@ const ScheduleDetailForm = ({ scheduleId, data }: { scheduleId: number; data: Ge
       : { isRepeat: "no", repeatFrequency: "weekly", repeatInterval: 1, repeatEndCount: 1 }),
   };
 
-  const form = useForm<FormValues>({ resolver: zodResolver(scheduleSchema), defaultValues, mode: "onBlur" });
+  const form = useForm<ScheduleFormValues>({ resolver: zodResolver(scheduleSchema), defaultValues, mode: "onBlur" });
   const { formState, getValues } = form;
   const { isValid } = formState;
 

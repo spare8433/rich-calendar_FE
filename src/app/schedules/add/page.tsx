@@ -10,12 +10,14 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import ErrorBoundary from "@/app/components/error-boundary";
 import { Button, LoadingButton } from "@/app/components/ui/button";
 import { Form } from "@/app/components/ui/form";
-import { FormValues, ScheduleForm, scheduleSchema } from "@/app/schedules/schedule-form";
+import { ScheduleForm } from "@/app/schedules/schedule-form";
 import { REPEAT_FREQUENCY } from "@/constants";
 import { useCalendarContext } from "@/contexts/calendar";
 import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
 import { handleMutationError } from "@/lib/utils";
+
+import { ScheduleFormValues, scheduleSchema } from "./schedule-form/form-schema";
 
 interface CreateScheduleVariables {
   req: CreateScheduleReq;
@@ -46,7 +48,7 @@ export default function ScheduleAdd() {
       }),
   });
 
-  const defaultValues: FormValues = {
+  const defaultValues: ScheduleFormValues = {
     title: "",
     color: "pink",
     description: "",
@@ -61,10 +63,10 @@ export default function ScheduleAdd() {
   } as const;
 
   // 상세 정보 form 관리를 위한 useForm
-  const form = useForm<FormValues>({ resolver: zodResolver(scheduleSchema), mode: "onBlur", defaultValues });
+  const form = useForm<ScheduleFormValues>({ resolver: zodResolver(scheduleSchema), mode: "onBlur", defaultValues });
 
   // form 제출 이벤트 핸들러 변경된 form 내용을 토대로 최종 확인 모달 open
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<ScheduleFormValues> = (data) => {
     const { tags, isRepeat, repeatEndCount, repeatFrequency, repeatInterval, startDate, endDate, ...rest } = data;
     mutate({
       req: {
