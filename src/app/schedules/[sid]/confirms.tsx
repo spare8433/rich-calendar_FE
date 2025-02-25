@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
 import { handleMutationError } from "@/lib/utils";
 
-import { FormValues } from "../schedule-form";
+import { ScheduleFormValues } from "../add/schedule-form/form-schema";
 
 type UseMutationCallbacks = (
   processName: string,
@@ -55,7 +55,7 @@ interface BasicConfirmProps {
   onOpenChange: (open: boolean) => void;
 }
 interface ChangeConfirmProps extends BasicConfirmProps {
-  defaultValues: FormValues;
+  defaultValues: ScheduleFormValues;
 }
 interface ModifyScheduleVariables {
   req: UpdateScheduleReq;
@@ -67,7 +67,7 @@ const ChangeConfirm = ({ open, scheduleId, defaultValues, onOpenChange }: Change
   const startAt = searchParams.get("startAt");
   const endAt = searchParams.get("endAt");
 
-  const { watch } = useFormContext<FormValues>();
+  const { watch } = useFormContext<ScheduleFormValues>();
   const formValues = watch();
   const mutationCallbacks = useMutationCallbacks("일정 수정", () => onOpenChange(false));
 
@@ -125,7 +125,7 @@ interface DeleteScheduleVariables {
 }
 
 const DeleteConfirm = ({ open, scheduleId, onOpenChange }: BasicConfirmProps) => {
-  const { watch } = useFormContext<FormValues>();
+  const { watch } = useFormContext<ScheduleFormValues>();
   const formValues = watch();
   const mutationCallbacks = useMutationCallbacks("일정 삭제", () => onOpenChange(false));
 
