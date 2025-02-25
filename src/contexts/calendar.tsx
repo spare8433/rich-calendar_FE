@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { produce } from "immer";
 import { createContext, ReactNode, useContext } from "react";
 import { RefObject, useState } from "react";
-import { v4 as uuidv4 } from "uuid"; // npm install uuid
+import { v4 as uuidv4 } from "uuid";
 
 import { DUMMY_SCHEDULES, DUMMY_TAGS, FREQUENCY, SCHEDULE_VIEW_TYPE } from "@/constants";
 import { useToast } from "@/hooks/use-toast";

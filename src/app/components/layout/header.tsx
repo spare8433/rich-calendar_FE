@@ -2,6 +2,7 @@
 
 import { ChevronDown, LogOut, Trash2 } from "lucide-react";
 
+import { logout } from "@/actions";
 import Sign from "@/app/components/sign";
 import {
   AlertDialog,
@@ -52,18 +53,13 @@ const UserPopover = () => {
           {/* 사용자 정보 */}
           <div>
             <p className="text-base font-medium">demoUser</p>
-            <p className="text-muted-foreground text-sm">yourWatchDemo.rich.calendar</p>
+            <p className="text-muted-foreground text-sm">yourWatchDemo@rich.calendar</p>
           </div>
         </div>
 
         <Separator />
 
-        <Button
-          type="button"
-          className="w-full justify-start space-x-4"
-          variant="ghost"
-          onClick={() => toast({ title: "데모 버전에서는 사용할 수 없는 기능입니다.", variant: "success" })}
-        >
+        <Button type="button" className="w-full justify-start space-x-4" variant="ghost" onClick={logout}>
           <LogOut size="14" />
           <span>로그아웃</span>
         </Button>
@@ -77,15 +73,12 @@ const UserPopover = () => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>취소</AlertDialogTitle>
+              <AlertDialogTitle>회원 탈퇴</AlertDialogTitle>
               <AlertDialogDescription>정말로 회원탈퇴를 진행하시겠습니까?</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel className={buttonVariants({ variant: "outline", size: "lg" })}>취소</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => toast({ title: "데모 버전에서는 사용할 수 없는 기능입니다.", variant: "success" })}
-                className={buttonVariants({ variant: "destructive", size: "lg" })}
-              >
+              <AlertDialogAction onClick={logout} className={buttonVariants({ variant: "destructive", size: "lg" })}>
                 탈퇴
               </AlertDialogAction>
             </AlertDialogFooter>

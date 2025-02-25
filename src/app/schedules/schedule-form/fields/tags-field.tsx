@@ -117,12 +117,7 @@ export default function TagsField() {
                       </div>
 
                       {/* tag 서브 메뉴 */}
-                      <DropdownMenu
-                        onOpenChange={(open) => {
-                          alert(open);
-                          setIsSubMenuOpen(open);
-                        }}
-                      >
+                      <DropdownMenu onOpenChange={(open) => setIsSubMenuOpen(open)}>
                         <DropdownMenuTrigger>
                           <Ellipsis size={16} />
                         </DropdownMenuTrigger>

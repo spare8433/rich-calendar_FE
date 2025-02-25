@@ -2,6 +2,12 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
+  const token = req.cookies.get("token"); // JWT 쿠키 확인
+
+  if (!token) {
+    return NextResponse.redirect(new URL("/auth/login", req.url));
+  }
+
   if (req.nextUrl.pathname === "/") {
     return NextResponse.redirect(new URL("/schedules", req.url));
   }
