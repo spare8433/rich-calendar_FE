@@ -2,6 +2,10 @@ interface SchedulePathParam {
   sid: string;
 }
 
+interface ScheduleTagPathParam {
+  tid: string;
+}
+
 interface GetSchedulesReq {
   startDate: string; // ISO8601
   endDate: string; // ISO8601
@@ -11,8 +15,6 @@ interface GetSchedulesReq {
 interface GetSchedulesRes {
   schedules: CalendarSchedule[];
 }
-
-type GetScheduleParam = SchedulePathParam;
 
 interface BasicScheduleDetail {
   id: number;
@@ -45,8 +47,13 @@ interface GetScheduleTagsRes {
   tags: Tag[];
 }
 
-type UpdateScheduleParam = SchedulePathParam;
-type DeleteScheduleParam = SchedulePathParam;
+interface CreateScheduleTagReq {
+  title: string;
+}
+
+interface UpdateScheduleTagReq {
+  title: string;
+}
 
 interface ModifyCalendarScheduleReq {
   beforeStartAt: string;

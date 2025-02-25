@@ -13,9 +13,12 @@ interface ApiEndpointInfo {
 export interface ApiEndpoint {
   getCalendarSchedules: HttpReqRes<GetSchedulesReq, GetSchedulesRes>;
   getScheduleTags: HttpReqRes<never, GetScheduleTagsRes>;
+  createScheduleTag: HttpReqRes<CreateScheduleTagReq, never>;
+  updateScheduleTag: HttpReqRes<UpdateScheduleTagReq, never>;
+  deleteScheduleTag: HttpReqRes<never, never>;
   getSchedule: HttpReqRes<never, GetScheduleRes>;
   getSummarySchedules: HttpReqRes<GetSummarySchedulesReq, GetSummarySchedulesRes>;
-  modifyCalendarSchedule: HttpReqRes<ModifyCalendarScheduleReq, never>;
+  modifyCalendarSchedule: HttpReqRes<UpdateScheduleTagReq, never>;
   updateSchedule: HttpReqRes<UpdateScheduleReq, never>;
   deleteSchedule: HttpReqRes<never, never>;
   createSchedule: HttpReqRes<CreateScheduleReq, never>;
@@ -71,6 +74,21 @@ export const apiEndpoint: Record<keyof ApiEndpoint, ApiEndpointInfo> = {
   getScheduleTags: {
     url: "/api/schedules/tags",
     method: "GET",
+    withCredentials: true,
+  },
+  createScheduleTag: {
+    url: "/api/schedules/tags",
+    method: "POST",
+    withCredentials: true,
+  },
+  updateScheduleTag: {
+    url: "/api/schedules/tags",
+    method: "PUT",
+    withCredentials: true,
+  },
+  deleteScheduleTag: {
+    url: "/api/schedules/tags",
+    method: "DELETE",
     withCredentials: true,
   },
   getSummarySchedules: {
