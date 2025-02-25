@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo "🔍 푸시 전에 프로젝트를 빌드하여 검증합니다..."
+if pnpm build; then
+  echo "✅ 빌드 성공! 푸시를 진행합니다."
+  exit 0
+else
+  echo "❌ 빌드 오류가 발생했습니다. 푸시가 중단되었습니다."
+  exit 1
+fi
