@@ -22,7 +22,7 @@ interface VerifyEmailModalProps {
 export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEmailModalProps) {
   const { toast } = useToast();
   const [verifyEmailStage, setVerifyEmailStage] = useState<"sendCode" | "viewCode" | "verifyCode">("sendCode");
-  const [generatedCode, setGeneratedCodeCode] = useState<string | null>(null);
+  const [generatedCode, setGeneratedCode] = useState<string | null>(null);
 
   const sendEmailForm = useForm<SendCodeFormValues>({
     resolver: zodResolver(sendCodeSchema),
@@ -45,12 +45,12 @@ export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEm
       title: `코드 발급 : ${newCode}`,
       duration: 10000,
       action: (
-        <ToastAction altText="Goto schedule to undo" onClick={async () => await navigator.clipboard.writeText(newCode)}>
+        <ToastAction altText="clip code" onClick={async () => await navigator.clipboard.writeText(newCode)}>
           복사
         </ToastAction>
       ),
     });
-    setGeneratedCodeCode(newCode);
+    setGeneratedCode(newCode);
     setVerifyEmailStage("verifyCode");
   };
 
@@ -78,7 +78,7 @@ export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEm
                   <FormItem>
                     <FormLabel>이메일</FormLabel>
                     <FormControl>
-                      <Input placeholder="이메일" readOnly {...field} />
+                      <Input placeholder="이메일" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -93,6 +93,7 @@ export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEm
             </form>
           </Form>
         )}
+
         {verifyEmailStage === "verifyCode" && (
           <Form {...verifyEmailForm}>
             <form onSubmit={verifyEmailForm.handleSubmit(verifyCode)} className="space-y-6">

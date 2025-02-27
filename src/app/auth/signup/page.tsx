@@ -28,18 +28,22 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/app/components/ui/input";
 import { Textarea } from "@/app/components/ui/textarea";
 import { SERVICE, TERMS } from "@/constants";
-import { useToast } from "@/hooks/use-toast";
 
 export default function Signup() {
   const router = useRouter();
-  const { toast } = useToast();
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(SIGNUP_SCHEMA),
     mode: "onBlur",
-    defaultValues: { username: "", email: "", password: "", confirmPassword: "", agreeToTerms: false },
+    defaultValues: {
+      username: "demoUser",
+      email: "",
+      password: "thisIsNotRealPassword1!",
+      confirmPassword: "thisIsNotRealPassword1!",
+      agreeToTerms: false,
+    },
   });
 
   return (
