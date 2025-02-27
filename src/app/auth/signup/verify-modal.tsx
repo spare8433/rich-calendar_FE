@@ -5,7 +5,7 @@ import { DefaultError, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { SEND_CODE_SCHEMA, SendCodeFormValues, VERIFY_CODE_SCHEMA, VerifyCodeFormValues } from "@/app/auth/schemas";
+import { SendCodeFormValues, sendCodeSchema, VerifyCodeFormValues, verifyCodeSchema } from "@/app/auth/schemas";
 import { LoadingButton } from "@/app/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/app/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/components/ui/form";
@@ -24,13 +24,13 @@ export default function VerifyEmailModal({ changeIsOpen, updateEmail }: VerifyEm
   const [verifyEmailStage, setVerifyEmailStage] = useState<"sendCode" | "verifyCode">("sendCode");
 
   const sendEmailForm = useForm<SendCodeFormValues>({
-    resolver: zodResolver(SEND_CODE_SCHEMA),
+    resolver: zodResolver(sendCodeSchema),
     defaultValues: { email: "" },
     mode: "onChange",
   });
 
   const verifyEmailForm = useForm<VerifyCodeFormValues>({
-    resolver: zodResolver(VERIFY_CODE_SCHEMA),
+    resolver: zodResolver(verifyCodeSchema),
     defaultValues: { code: "" },
     mode: "onBlur",
   });
