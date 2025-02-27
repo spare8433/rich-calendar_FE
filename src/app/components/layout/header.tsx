@@ -128,7 +128,7 @@ const UserPopover = () => {
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>취소</AlertDialogTitle>
+                <AlertDialogTitle>회원 탈퇴</AlertDialogTitle>
                 <AlertDialogDescription>정말로 회원탈퇴를 진행하시겠습니까?</AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

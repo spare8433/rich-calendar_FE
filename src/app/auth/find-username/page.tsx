@@ -14,8 +14,8 @@ import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
 import { handleMutationError } from "@/lib/utils";
 
-const FIND_USERNAME_FORM_SCHEMA = z.object({ email: z.string().email("유효한 이메일 주소를 입력해주세요.") });
-type FormValues = z.infer<typeof FIND_USERNAME_FORM_SCHEMA>;
+const findUsernameFormSchema = z.object({ email: z.string().email("유효한 이메일 주소를 입력해주세요.") });
+type FormValues = z.infer<typeof findUsernameFormSchema>;
 
 interface FindUsernameVariables {
   req: FindUsernameReq;
@@ -26,7 +26,7 @@ export default function FindUsername() {
   const router = useRouter();
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(FIND_USERNAME_FORM_SCHEMA),
+    resolver: zodResolver(findUsernameFormSchema),
     defaultValues: { email: "" },
     mode: "onChange",
   });
@@ -38,11 +38,11 @@ export default function FindUsername() {
     },
     onError: (error) =>
       handleMutationError(error, {
-        400: () => toast({ title: "로그인에 실패했습니다 입력하신정보를 다시확인해주세요.", variant: "warning" }),
-        404: () => toast({ title: "로그인에 실패했습니다 입력하신정보를 다시확인해주세요.", variant: "warning" }),
+        400: () => toast({ title: "아이디 찾기에 실패했습니다 입력하신정보를 다시확인해주세요.", variant: "warning" }),
+        404: () => toast({ title: "아이디 찾기에 실패했습니다 입력하신정보를 다시확인해주세요.", variant: "warning" }),
         default: () =>
           toast({
-            title: "로그인이 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
+            title: "아이디 찾기가 정상적으로 처리되지 않았습니다 잠시 후 다시 시도해 주세요.",
             variant: "destructive",
           }),
       }),
