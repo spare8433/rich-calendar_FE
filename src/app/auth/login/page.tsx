@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
 import { handleMutationError } from "@/lib/utils";
 
-const LOGIN_FORM_SCHEMA = z.object({
+const loginFormSchema = z.object({
   username: z
     .string()
     .min(5, "아이디는 최소 5자 이상이어야 합니다.")
@@ -30,7 +30,7 @@ const LOGIN_FORM_SCHEMA = z.object({
     ),
 });
 
-type FormValues = z.infer<typeof LOGIN_FORM_SCHEMA>;
+type FormValues = z.infer<typeof loginFormSchema>;
 
 interface LoginVariables {
   req: LoginReq;
@@ -41,7 +41,7 @@ export default function Login() {
   const router = useRouter();
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(LOGIN_FORM_SCHEMA),
+    resolver: zodResolver(loginFormSchema),
     defaultValues: { username: "", password: "" },
   });
 

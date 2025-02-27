@@ -39,7 +39,7 @@ export default function Signup() {
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(SIGNUP_SCHEMA),
+    resolver: zodResolver(signupSchema),
     mode: "onBlur",
     defaultValues: { username: "", email: "", password: "", confirmPassword: "", agreeToTerms: false },
   });
@@ -99,7 +99,7 @@ export default function Signup() {
   );
 }
 
-const SIGNUP_SCHEMA = z
+const signupSchema = z
   .object({
     username: z
       .string()
@@ -123,7 +123,7 @@ const SIGNUP_SCHEMA = z
     path: ["confirmPassword"],
   });
 
-type FormValues = z.infer<typeof SIGNUP_SCHEMA>;
+type FormValues = z.infer<typeof signupSchema>;
 
 const UsernameField = () => {
   const { control, setError, getValues, trigger } = useFormContext<FormValues>();

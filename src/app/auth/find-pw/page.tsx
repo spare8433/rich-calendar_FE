@@ -7,7 +7,7 @@ import { useState } from "react";
 import { FieldValues, useForm, useFormContext, UseFormHandleSubmit } from "react-hook-form";
 import { z } from "zod";
 
-import { SEND_CODE_SCHEMA, SendCodeFormValues, VERIFY_CODE_SCHEMA, VerifyCodeFormValues } from "@/app/auth/schemas";
+import { SendCodeFormValues, sendCodeSchema, VerifyCodeFormValues, verifyCodeSchema } from "@/app/auth/schemas";
 import { LoadingButton } from "@/app/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/components/ui/form";
 import { Input } from "@/app/components/ui/input";
@@ -15,7 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import apiRequest from "@/lib/api";
 import { handleMutationError } from "@/lib/utils";
 
-const RESET_PASSWORD_SCHEMA = z
+const resetPasswordSchema = z
   .object({
     password: z
       .string()
@@ -32,7 +32,7 @@ const RESET_PASSWORD_SCHEMA = z
     path: ["confirmPassword"],
   });
 
-type ResetPwFormValues = z.infer<typeof RESET_PASSWORD_SCHEMA>;
+type ResetPwFormValues = z.infer<typeof resetPasswordSchema>;
 
 interface SendPwCodeVariables {
   req: SendPwCodeReq;
@@ -50,19 +50,19 @@ export default function FindPw() {
   const [findPwStage, setFindPwStage] = useState<"sendCode" | "verifyCode" | "resetPw">("sendCode");
 
   const sendEmailForm = useForm<SendCodeFormValues>({
-    resolver: zodResolver(SEND_CODE_SCHEMA),
+    resolver: zodResolver(sendCodeSchema),
     defaultValues: { email: "" },
     mode: "onChange",
   });
 
   const verifyEmailForm = useForm<VerifyCodeFormValues>({
-    resolver: zodResolver(VERIFY_CODE_SCHEMA),
+    resolver: zodResolver(verifyCodeSchema),
     defaultValues: { code: "" },
     mode: "onBlur",
   });
 
   const resetPwForm = useForm<ResetPwFormValues>({
-    resolver: zodResolver(RESET_PASSWORD_SCHEMA),
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: { password: "", confirmPassword: "" },
     mode: "onBlur",
   });
