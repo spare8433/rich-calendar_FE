@@ -64,7 +64,6 @@ export default function TagsField() {
 
   return (
     <div className="space-y-3">
-      {isSubMenuOpen ? "true" : "false"}
       <div className="mb-3 flex items-center gap-x-4">
         <span className="text-sm font-medium">분류</span>
 
