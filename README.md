@@ -8,7 +8,7 @@
     개인 스케줄을 관리할 수 있는 웹 애플리케이션입니다.
     <br />
     <br />
-    <a href="https://rich-calendar-fe-git-demo-spare8433s-projects.vercel.app/">View Demo Page</a>
+    <a href="https://demo.richcalendar.kro.kr/">View Demo Page</a>
     &middot;
     <a href="https://richcalendar.kro.kr/">View Page</a>
     &middot;
