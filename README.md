@@ -82,7 +82,7 @@
 
 <br />
 
-<b>배포 페이지 (회원가입 / 로그인 필요)</b> : https://debatalk.kro.kr/
+<b>배포 페이지 (회원가입 / 로그인 필요)</b> : https://richcalendar.kro.kr
 
 <br />
 
